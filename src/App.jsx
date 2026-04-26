@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabase";
 
   if (error) {
     setSaveStatus(error.message);
-    return;
+    
   }
 
   setSaveStatus("Logged in.");
