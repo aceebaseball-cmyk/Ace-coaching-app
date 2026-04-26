@@ -189,6 +189,7 @@ export default function AceCoachAppPreview() {
   const [session, setSession] = useState(null);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [saveStatus, setSaveStatus] = useState("");
  
 
   const signUpCoach = async () => {
@@ -332,7 +333,6 @@ if (!session) {
   const [selectedDrills, setSelectedDrills] = useState([]);
   const [selectedArm, setSelectedArm] = useState([]);
   const [weekName, setWeekName] = useState("Week 1");
-  const [saveStatus, setSaveStatus] = useState("");
   const [plan, setPlan] = useState(() => createEmptyPlan());
   const [templates, setTemplates] = useState(() => {
     try {
