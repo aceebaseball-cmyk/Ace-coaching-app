@@ -1,6 +1,47 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 
+const signUpCoach = async () => {
+  const { data, error } = await supabase.auth.signUp({
+    email: loginEmail,
+    password: loginPassword,
+  });
+
+  if (error) {
+    setSaveStatus(error.message);
+    return;
+  }
+
+  if (data.user) {
+    await supabase.from("profiles").insert({
+      id: data.user.id,
+      role: "coach",
+      full_name: loginEmail,
+    });
+  }
+
+  setSaveStatus("Coach account created. Check email if confirmation is required.");
+};
+
+const loginCoach = async () => {
+  const { error } = await supabase.auth.signInWithPassword({
+    email: loginEmail,
+    password: loginPassword,
+  });
+
+  if (error) {
+    setSaveStatus(error.message);
+    return;
+  }
+
+  setSaveStatus("Logged in.");
+};
+
+const logoutCoach = async () => {
+  await supabase.auth.signOut();
+  setSaveStatus("Logged out.");
+};
+
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const dayTypes = ["Throw Day", "Bullpen Day", "Recovery Day", "Lift Day", "Off / Mobility"];
 const throwingTypes = ["Off", "Recovery Throw", "Light Catch", "Long Toss", "Medium Intent", "High Intent", "Bullpen"];
@@ -184,6 +225,22 @@ const armCare = armBase.map((b, i) => ({
 }));
 
  export default function AceCoachAppPreview() {
+   const [session, setSession] = useState(null);
+const [loginEmail, setLoginEmail] = useState("");
+const [loginPassword, setLoginPassword] = useState("");
+
+useEffect(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    setSession(data.session);
+  });
+
+  const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+  });
+
+  return () => listener.subscription.unsubscribe();
+}, []);
+
 
   useEffect(() => {
     async function test() {
@@ -193,7 +250,30 @@ const armCare = armBase.map((b, i) => ({
 
     test();
   }, []);
- 
+
+   if (!session) {
+  return (
+    <div style={{ padding: "40px", color: "white" }}>
+      <h1>ACE Coach Login</h1>
+
+      <input
+        placeholder="Email"
+        value={loginEmail}
+        onChange={(e) => setLoginEmail(e.target.value)}
+      />
+
+      <input
+        placeholder="Password"
+        type="password"
+        value={loginPassword}
+        onChange={(e) => setLoginPassword(e.target.value)}
+      />
+
+      <button onClick={loginCoach}>Login</button>
+      <button onClick={signUpCoach}>Create Account</button>
+    </div>
+  );
+}
   const emptyProfile = {
     name: "",
     age: "",
