@@ -197,19 +197,55 @@ const armCare = armBase.map((b, i) => ({
   video: "Video placeholder",
 }));
 
- export default function AceCoachAppPreview() {
-   const [session, setSession] = useState(null);
-const [loginEmail, setLoginEmail] = useState("");
-const [loginPassword, setLoginPassword] = useState("");
-   const signUpCoach = async () => {
-  console.log("SIGNUP CLICKED");
-  ...
-};
+export default function AceCoachAppPreview() {
+  const [session, setSession] = useState(null);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
 
-const loginCoach = async () => {
-  console.log("LOGIN CLICKED");
-  ...
-};
+  const signUpCoach = async () => {
+    console.log("SIGNUP CLICKED");
+
+    const { data, error } = await supabase.auth.signUp({
+      email: loginEmail,
+      password: loginPassword,
+    });
+
+    if (error) {
+      setSaveStatus(error.message);
+      return;
+    }
+
+    if (data.user) {
+      await supabase.from("profiles").insert({
+        id: data.user.id,
+        role: "coach",
+        full_name: loginEmail,
+      });
+    }
+
+    setSaveStatus("Coach account created. Check email if confirmation is required.");
+  };
+
+  const loginCoach = async () => {
+    console.log("LOGIN CLICKED");
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: loginEmail,
+      password: loginPassword,
+    });
+
+    if (error) {
+      setSaveStatus(error.message);
+      return;
+    }
+
+    setSaveStatus("Logged in.");
+  };
+
+  const logoutCoach = async () => {
+    await supabase.auth.signOut();
+    setSaveStatus("Logged out.");
+  };
 
 useEffect(() => {
   supabase.auth.getSession().then(({ data }) => {
