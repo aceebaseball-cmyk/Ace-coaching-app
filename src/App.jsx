@@ -426,7 +426,7 @@ if (!session) {
     setShowAddAthlete(false);
     setSaveStatus(`Created athlete: ${newAthlete.name}.`);
   
-   if (session?.user) {
+  if (session?.user) {
   const { error } = await supabase.from("athletes").insert({
     coach_id: session.user.id,
     name: newAthlete.name,
@@ -446,7 +446,7 @@ if (!session) {
     console.log("ATHLETE SAVED");
     setSaveStatus(`Created and saved athlete: ${newAthlete.name}.`);
   }
-};
+}
 
   const selectAthlete = (athleteId) => {
     setActiveAthleteId(athleteId);
