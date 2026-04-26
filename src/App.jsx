@@ -299,7 +299,16 @@ if (!session) {
     </div>
   );
 }
-
+const emptyProfile = {
+  name: "",
+  age: "",
+  level: "",
+  hand: "",
+  goals: "",
+  currentVelo: "",
+  targetVelo: "",
+  soreness: "",
+};
   const createEmptyPlan = () =>
     Object.fromEntries(days.map((d) => [d, { type: "Throw Day", throwing: "Light Catch", throwingDetails: "", drills: [], arm: [], notes: "" }]));
 
