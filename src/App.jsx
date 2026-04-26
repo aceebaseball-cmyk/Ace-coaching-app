@@ -438,6 +438,7 @@ if (!session) {
     target_velo: newAthlete.targetVelo,
     soreness: newAthlete.soreness,
   });
+  }
 
   if (error) {
     console.log("SAVE ERROR:", error.message);
