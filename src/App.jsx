@@ -189,8 +189,7 @@ export default function AceCoachAppPreview() {
   const [session, setSession] = useState(null);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-  const [saveStatus, setSaveStatus] = useState("");
-  
+ 
 
   const signUpCoach = async () => {
     console.log("SIGNUP CLICKED");
