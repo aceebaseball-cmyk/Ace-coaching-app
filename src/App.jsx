@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 const signUpCoach = async () => {
+  console.log("SIGNUP CLICKED");
   const { data, error } = await supabase.auth.signUp({
     email: loginEmail,
     password: loginPassword,
@@ -24,6 +25,7 @@ const signUpCoach = async () => {
 };
 
 const loginCoach = async () => {
+  console.log("LOGIN CLICKED");
   const { error } = await supabase.auth.signInWithPassword({
     email: loginEmail,
     password: loginPassword,
