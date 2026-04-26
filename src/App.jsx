@@ -217,20 +217,29 @@ export default function AceCoachAppPreview() {
   };
 
   const loginCoach = async () => {
-    console.log("LOGIN CLICKED");
+  console.log("LOGIN CLICKED");
 
-    const { error } = await supabase.auth.signInWithPassword({
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: loginEmail,
       password: loginPassword,
     });
 
+    console.log("LOGIN RESPONSE:", data, error);
+
     if (error) {
+      alert("LOGIN ERROR: " + error.message);
       setSaveStatus(error.message);
       return;
     }
 
+    alert("LOGIN SUCCESS");
     setSaveStatus("Logged in.");
-  };
+  } catch (err) {
+    console.log("CRASH:", err);
+    alert("CRASH: " + err.message);
+  }
+};
 
   const logoutCoach = async () => {
     await supabase.auth.signOut();
