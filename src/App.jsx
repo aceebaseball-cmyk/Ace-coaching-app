@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const dayTypes = ["Throw Day", "Bullpen Day", "Recovery Day", "Lift Day", "Off / Mobility"];
@@ -182,7 +183,17 @@ const armCare = armBase.map((b, i) => ({
   video: "Video placeholder",
 }));
 
-export default function AceCoachAppPreview() {
+ export default function AceCoachAppPreview() {
+
+  useEffect(() => {
+    async function test() {
+      const { data, error } = await supabase.from("athletes").select("*");
+      console.log("SUPABASE:", data, error);
+    }
+
+    test();
+  }, []);
+ 
   const emptyProfile = {
     name: "",
     age: "",
