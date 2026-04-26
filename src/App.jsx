@@ -251,29 +251,73 @@ useEffect(() => {
     test();
   }, []);
 
-   if (!session) {
+ if (!session) {
   return (
-    <div style={{ padding: "40px", color: "white" }}>
-      <h1>ACE Coach Login</h1>
+    <div className="min-h-screen bg-black text-white relative overflow-hidden flex items-center justify-center p-5">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.04]">
+        <div className="text-[34vw] font-black tracking-tighter">ACE</div>
+      </div>
 
-      <input
-        placeholder="Email"
-        value={loginEmail}
-        onChange={(e) => setLoginEmail(e.target.value)}
-      />
+      <div className="relative z-10 w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-3xl p-7 shadow-2xl shadow-red-950/30">
+        <div className="mb-6 text-center">
+          <div className="mx-auto mb-4 w-20 h-20 rounded-2xl bg-white p-3 flex items-center justify-center shadow-xl shadow-red-950/40">
+            <div className="text-black font-black text-3xl">A</div>
+          </div>
 
-      <input
-        placeholder="Password"
-        type="password"
-        value={loginPassword}
-        onChange={(e) => setLoginPassword(e.target.value)}
-      />
+          <div className="text-xs text-red-400 font-black uppercase tracking-widest mb-2">
+            ACE Coach Console
+          </div>
 
-      <button onClick={loginCoach}>Login</button>
-      <button onClick={signUpCoach}>Create Account</button>
+          <h1 className="text-4xl font-black uppercase leading-tight">
+            Coach Login
+          </h1>
+
+          <p className="text-zinc-400 mt-2">
+            Build plans. Track athletes. Control the development system.
+          </p>
+        </div>
+
+        {saveStatus && (
+          <div className="mb-4 rounded-xl border border-zinc-800 bg-black px-4 py-3 text-sm text-zinc-300">
+            {saveStatus}
+          </div>
+        )}
+
+        <input
+          placeholder="Email"
+          value={loginEmail}
+          onChange={(e) => setLoginEmail(e.target.value)}
+          className="w-full mb-3 bg-black border border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-red-600"
+        />
+
+        <input
+          placeholder="Password"
+          type="password"
+          value={loginPassword}
+          onChange={(e) => setLoginPassword(e.target.value)}
+          className="w-full mb-5 bg-black border border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-red-600"
+        />
+
+        <button
+          onClick={loginCoach}
+          className="w-full bg-white text-black rounded-xl py-3 font-black mb-3"
+        >
+          Login
+        </button>
+
+        <button
+          onClick={signUpCoach}
+          className="w-full bg-red-700 text-white rounded-xl py-3 font-black"
+        >
+          Create Coach Account
+        </button>
+
+        <p className="text-xs text-zinc-600 text-center mt-5">
+          Coach access only. Athlete portal is separate.
+        </p>
+      </div>
     </div>
   );
-}
   const emptyProfile = {
     name: "",
     age: "",
