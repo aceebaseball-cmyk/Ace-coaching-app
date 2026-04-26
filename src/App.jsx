@@ -410,7 +410,7 @@ if (!session) {
     setSaveStatus("Current assessment and weekly plan reset.");
   };
 
-  const saveAthlete = () => {
+ const saveAthlete = async () => {
     if (!newAthleteProfile.name.trim()) return;
     const newAthlete = {
       id: Date.now(),
@@ -426,6 +426,27 @@ if (!session) {
     setShowAddAthlete(false);
     setSaveStatus(`Created athlete: ${newAthlete.name}.`);
   };
+   if (session?.user) {
+  const { error } = await supabase.from("athletes").insert({
+    coach_id: session.user.id,
+    name: newAthlete.name,
+    age: newAthlete.age,
+    level: newAthlete.level,
+    hand: newAthlete.hand,
+    goals: newAthlete.goals,
+    current_velo: newAthlete.currentVelo,
+    target_velo: newAthlete.targetVelo,
+    soreness: newAthlete.soreness,
+  });
+
+  if (error) {
+    console.log("SAVE ERROR:", error.message);
+    setSaveStatus(`Created locally, but database save failed: ${error.message}`);
+  } else {
+    console.log("ATHLETE SAVED");
+    setSaveStatus(`Created and saved athlete: ${newAthlete.name}.`);
+  }
+}
 
   const selectAthlete = (athleteId) => {
     setActiveAthleteId(athleteId);
