@@ -1,35 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-const signUpCoach = async () => {
-  console.log("SIGNUP CLICKED");
-  const { data, error } = await supabase.auth.signUp({
-    email: loginEmail,
-    password: loginPassword,
-  });
-
-  if (error) {
-    setSaveStatus(error.message);
-    return;
-  }
-
-  if (data.user) {
-    await supabase.from("profiles").insert({
-      id: data.user.id,
-      role: "coach",
-      full_name: loginEmail,
-    });
-  }
-
-  setSaveStatus("Coach account created. Check email if confirmation is required.");
-};
-
-const loginCoach = async () => {
-  console.log("LOGIN CLICKED");
-  const { error } = await supabase.auth.signInWithPassword({
-    email: loginEmail,
-    password: loginPassword,
-  });
 
   if (error) {
     setSaveStatus(error.message);
@@ -230,6 +201,15 @@ const armCare = armBase.map((b, i) => ({
    const [session, setSession] = useState(null);
 const [loginEmail, setLoginEmail] = useState("");
 const [loginPassword, setLoginPassword] = useState("");
+   const signUpCoach = async () => {
+  console.log("SIGNUP CLICKED");
+  ...
+};
+
+const loginCoach = async () => {
+  console.log("LOGIN CLICKED");
+  ...
+};
 
 useEffect(() => {
   supabase.auth.getSession().then(({ data }) => {
