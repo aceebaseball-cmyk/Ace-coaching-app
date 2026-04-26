@@ -282,7 +282,7 @@ if (!session) {
         />
 
         <button
-          onClick={() => alert("LOGIN BUTTON WORKS")}
+        onClick={loginCoach}
           className="w-full bg-white text-black rounded-xl py-2 font-black mb-3"
         >
           Login
