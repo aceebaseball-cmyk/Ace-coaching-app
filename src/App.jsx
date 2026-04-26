@@ -2,18 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 
-  if (error) {
-    setSaveStatus(error.message);
-    
-  }
-
-  setSaveStatus("Logged in.");
-};
-
-const logoutCoach = async () => {
-  await supabase.auth.signOut();
-  setSaveStatus("Logged out.");
-};
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const dayTypes = ["Throw Day", "Bullpen Day", "Recovery Day", "Lift Day", "Off / Mobility"];
