@@ -674,7 +674,7 @@ const throwingSchedule =
 
     built.Monday = {
       type: "Throw Day",
-      throwing: throwing: throwingSchedule.Monday,
+      throwing: throwingSchedule.Monday,
       throwingDetails: "Light catch. Coach sets distance and volume.",
       drills: [...safeSlice(awarenessDrills, 0, 1, mainDrills), ...safeSlice(constraintDrills, 0, 1, mainDrills)],
       arm: [...safeSlice(preThrow, 0, 3, armCare), ...safeSlice(postThrow, 0, 1, armCare)],
