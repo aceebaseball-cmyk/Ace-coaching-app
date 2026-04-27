@@ -312,6 +312,7 @@ const emptyProfile = {
   const [selectedDrills, setSelectedDrills] = useState([]);
   const [selectedArm, setSelectedArm] = useState([]);
   const [weekName, setWeekName] = useState("Week 1");
+  const [phase, setPhase] = useState("Build");
   const [plan, setPlan] = useState(() => createEmptyPlan());
   const [templates, setTemplates] = useState(() => {
     try {
@@ -1265,11 +1266,24 @@ function Assessment({ activeAthlete, profile, setProfile, primaryIssues, setPrim
   );
 }
 
-function WeeklyBuilder({ activeAthlete, weekName, setWeekName, plan, setPlan, selectedDrills, selectedArm, recommendedDrills, recommendedArmCare, onDragStart, onDrop, removeFromDay, saveWeekToAthlete, autoBuildWeek, clearCurrentPlan }) {
+function WeeklyBuilder({ activeAthlete, weekName, setWeekName, plan, setPlan, selectedDrills, selectedArm, recommendedDrills, recommendedArmCare, onDragStart, onDrop, removeFromDay, saveWeekToAthlete, autoBuildWeek, clearCurrentPlan, phase, setPhase }) {
   return (
     <section>
       <div className="flex justify-between gap-4 flex-wrap mb-4"><div><h2 className="text-2xl font-black">Drag & Drop Weekly Builder</h2><p className="text-zinc-400">{activeAthlete ? `Saving to ${activeAthlete.name}` : "Select an athlete before saving."}</p></div><div className="flex gap-2 flex-wrap"><input value={weekName} onChange={(e) => setWeekName(e.target.value)} className="bg-black border border-zinc-800 rounded-xl px-4 py-2" /><button onClick={autoBuildWeek} className="bg-red-700 text-white rounded-xl px-4 py-2 font-black">Auto Build Suggestion</button><button onClick={clearCurrentPlan} className="bg-zinc-800 text-white rounded-xl px-4 py-2 font-black">Clear</button><button onClick={saveWeekToAthlete} className="bg-white text-black rounded-xl px-4 py-2 font-black">Save Week</button></div></div>
       {!activeAthlete && <div className="mb-4 rounded-xl border border-red-900 bg-red-950/30 px-4 py-3 text-sm text-red-200">Create or select an athlete first if you want the week to save.</div>}
+      <div className="mb-4 w-full max-w-xs">
+  <label className="block text-sm font-semibold mb-1 text-white">Phase</label>
+  <select
+    value={phase}
+    onChange={(e) => setPhase(e.target.value)}
+    className="w-full bg-black border border-zinc-800 rounded px-3 py-2 text-white"
+  >
+    <option>Build</option>
+    <option>Strength</option>
+    <option>Maintain</option>
+    <option>Deload</option>
+  </select>
+</div>
       <div className="grid lg:grid-cols-4 gap-5"><div className="lg:col-span-1 space-y-3"><h3 className="font-black text-red-400">Selected + Recommended</h3><div className="text-xs text-zinc-500 uppercase">Selected Drills</div>{selectedDrills.map((i) => <Mini key={i.id} item={i} kind="drills" onDragStart={onDragStart} />)}<div className="text-xs text-zinc-500 uppercase pt-3">Recommended Drills</div>{recommendedDrills.slice(0, 12).map((i) => <Mini key={`rec-${i.id}`} item={i} kind="drills" onDragStart={onDragStart} />)}<div className="text-xs text-zinc-500 uppercase pt-3">Selected Arm Care</div>{selectedArm.map((i) => <Mini key={i.id} item={i} kind="arm" onDragStart={onDragStart} />)}<div className="text-xs text-zinc-500 uppercase pt-3">Recommended Arm Care</div>{recommendedArmCare.slice(0, 12).map((i) => <Mini key={`rec-arm-${i.id}`} item={i} kind="arm" onDragStart={onDragStart} />)}</div><div className="lg:col-span-3 grid md:grid-cols-2 gap-4">{days.map((day) => { const pre = plan[day].arm.filter((item) => item.block === "Pre-Throw"); const post = plan[day].arm.filter((item) => item.block !== "Pre-Throw"); return <div key={day} onDragOver={(e) => e.preventDefault()} onDrop={(e) => onDrop(e, day)} className="min-h-64 rounded-3xl bg-zinc-950 border border-zinc-800 p-4"><div className="flex justify-between items-center mb-3"><h3 className="font-black text-xl">{day}</h3><select value={plan[day].type} onChange={(e) => setPlan({ ...plan, [day]: { ...plan[day], type: e.target.value } })} className="bg-black border border-zinc-700 rounded-lg p-1">{dayTypes.map((t) => <option key={t}>{t}</option>)}</select></div><Bucket label="Pre-Throw Activation" items={pre} day={day} kind="arm" remove={removeFromDay} /><Bucket label="Drill Work" items={plan[day].drills} day={day} kind="drills" remove={removeFromDay} /><div className="mb-3"><div className="text-xs text-zinc-500 uppercase mb-1">Throwing</div><select value={plan[day].throwing || "Off"} onChange={(e) => setPlan({ ...plan, [day]: { ...plan[day], throwing: e.target.value } })} className="w-full bg-black border border-zinc-700 rounded-xl p-2">{throwingTypes.map((t) => <option key={t}>{t}</option>)}</select><input value={plan[day].throwingDetails || ""} onChange={(e) => setPlan({ ...plan, [day]: { ...plan[day], throwingDetails: e.target.value } })} placeholder="Throwing details: distance, volume, focus..." className="w-full mt-2 bg-black border border-zinc-800 rounded-xl px-3 py-2 text-sm" /></div><Bucket label="Post-Throw Recovery" items={post} day={day} kind="arm" remove={removeFromDay} /><textarea value={plan[day].notes} onChange={(e) => setPlan({ ...plan, [day]: { ...plan[day], notes: e.target.value } })} placeholder="Coach notes..." className="w-full mt-3 bg-black border border-zinc-800 rounded-xl p-2" /></div>; })}</div></div>
     </section>
   );
