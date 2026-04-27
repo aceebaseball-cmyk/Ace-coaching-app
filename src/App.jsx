@@ -581,6 +581,47 @@ const emptyProfile = {
   };
 
   const autoBuildWeek = () => {
+    const throwingScheduleByPhase = {
+  Build: {
+    Monday: "Medium Intent",
+    Tuesday: "Recovery Throw",
+    Wednesday: "High Intent",
+    Thursday: "Light Catch",
+    Friday: "Bullpen",
+    Saturday: "Recovery Throw",
+    Sunday: "Off",
+  },
+  Strength: {
+    Monday: "Light Catch",
+    Tuesday: "Medium Intent",
+    Wednesday: "Recovery Throw",
+    Thursday: "High Intent",
+    Friday: "Recovery Throw",
+    Saturday: "Bullpen",
+    Sunday: "Off",
+  },
+  Maintain: {
+    Monday: "Light Catch",
+    Tuesday: "Medium Intent",
+    Wednesday: "Recovery Throw",
+    Thursday: "Light Catch",
+    Friday: "Bullpen",
+    Saturday: "Recovery Throw",
+    Sunday: "Off",
+  },
+  Deload: {
+    Monday: "Recovery Throw",
+    Tuesday: "Off",
+    Wednesday: "Light Catch",
+    Thursday: "Recovery Throw",
+    Friday: "Light Catch",
+    Saturday: "Off",
+    Sunday: "Off",
+  },
+};
+
+const throwingSchedule =
+  throwingScheduleByPhase[phase] || throwingScheduleByPhase.Build;
     const primaryMatched = drills.filter((d) => d.fixes.some((f) => primaryIssues.includes(f)));
     const secondaryMatched = drills.filter((d) => d.fixes.some((f) => secondaryIssues.includes(f)));
     const fallbackMatched = recommendedDrills;
