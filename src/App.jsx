@@ -674,7 +674,7 @@ const throwingSchedule =
 
     built.Monday = {
       type: "Throw Day",
-      throwing: "Light Catch",
+      throwing: throwing: throwingSchedule.Monday,
       throwingDetails: "Light catch. Coach sets distance and volume.",
       drills: [...safeSlice(awarenessDrills, 0, 1, mainDrills), ...safeSlice(constraintDrills, 0, 1, mainDrills)],
       arm: [...safeSlice(preThrow, 0, 3, armCare), ...safeSlice(postThrow, 0, 1, armCare)],
@@ -683,7 +683,7 @@ const throwingSchedule =
 
     built.Tuesday = {
       type: "Recovery Day",
-      throwing: "Recovery Throw",
+     throwing: throwingSchedule.Tuesday,
       throwingDetails: "Low stress recovery throw. Keep it easy and smooth.",
       drills: safeSlice(awarenessDrills, 1, 2, mainDrills),
       arm: safeSlice(recovery, 0, 6, armCare),
@@ -692,7 +692,7 @@ const throwingSchedule =
 
     built.Wednesday = {
       type: "Medium Intent Day",
-      throwing: "Medium Intent",
+      throwing: throwingSchedule.Wednesday,
       throwingDetails: "Controlled intensity throwing. Coach sets distance, volume, and intent.",
       drills: [...safeSlice(constraintDrills, 1, 2, mainDrills), ...safeSlice(dynamicDrills, 0, 2, mainDrills)],
       arm: [...safeSlice(preThrow, 3, 5, armCare), ...safeSlice(medium, 0, 4, armCare)],
@@ -701,7 +701,7 @@ const throwingSchedule =
 
     built.Thursday = {
       type: "Off / Mobility",
-      throwing: "Off",
+      throwing: throwingSchedule.Thursday,
       throwingDetails: "No throwing. Mobility and recovery only.",
       drills: [],
       arm: safeSlice(recovery, 6, 12, armCare),
@@ -710,7 +710,7 @@ const throwingSchedule =
 
     built.Friday = {
       type: "Bullpen Day",
-      throwing: "Bullpen",
+      throwing: throwingSchedule.Friday,
       throwingDetails: "Bullpen day. Coach sets pitch count, intent, and focus.",
       drills: [...safeSlice(dynamicDrills, 0, 1, mainDrills), ...safeSlice(transferDrills, 0, 2, mainDrills)],
       arm: [...safeSlice(preThrow, 0, 3, armCare), ...safeSlice(intense, 0, 3, armCare), ...safeSlice(postThrow, 0, 2, armCare)],
@@ -719,7 +719,7 @@ const throwingSchedule =
 
     built.Saturday = {
       type: "Recovery Day",
-      throwing: "Recovery Throw",
+      throwing: throwingSchedule.Saturday,
       throwingDetails: "Light recovery catch. Coach sets distance and volume.",
       drills: [],
       arm: safeSlice(recovery, 0, 6, armCare),
@@ -728,7 +728,7 @@ const throwingSchedule =
 
     built.Sunday = {
       type: "Off / Mobility",
-      throwing: "Off",
+     throwing: throwingSchedule.Sunday,
       throwingDetails: "No throwing unless coach adds optional light catch.",
       drills: [],
       arm: safeSlice(recovery, 12, 16, armCare),
