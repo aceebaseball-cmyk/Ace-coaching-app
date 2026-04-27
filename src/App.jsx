@@ -268,46 +268,7 @@ useEffect(() => {
     test();
   }, []);
 
-if (!session) {
-  return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-5">
-      <div className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-3xl p-7">
-        
-        <h1 className="text-3xl font-black mb-4">ACE Coach Login</h1>
 
-        <input
-          placeholder="Email"
-          value={loginEmail}
-          onChange={(e) => setLoginEmail(e.target.value)}
-          className="w-full mb-3 bg-black border border-zinc-800 rounded-xl px-3 py-2"
-        />
-
-        <input
-          placeholder="Password"
-          type="password"
-          value={loginPassword}
-          onChange={(e) => setLoginPassword(e.target.value)}
-          className="w-full mb-4 bg-black border border-zinc-800 rounded-xl px-3 py-2"
-        />
-
-        <button
-        onClick={loginCoach}
-          className="w-full bg-white text-black rounded-xl py-2 font-black mb-3"
-        >
-          Login
-        </button>
-
-        <button
-          onClick={signUpCoach}
-          className="w-full bg-red-700 text-white rounded-xl py-2 font-black"
-        >
-          Create Account
-        </button>
-
-      </div>
-    </div>
-  );
-}
 const emptyProfile = {
   name: "",
   age: "",
