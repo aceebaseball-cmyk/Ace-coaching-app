@@ -803,8 +803,7 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
       <div className="relative z-10 max-w-7xl mx-auto px-5 py-8">
         <header className="mb-6 border-b border-red-700/50 pb-5">
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-             <div className="flex items-center gap-4">
+<div className="flex items-center gap-4">
   <div className="w-16 h-16 rounded-2xl bg-white p-2 shadow-xl shadow-red-950/30 flex items-center justify-center">
     <img
       src="/ace-logo.png"
@@ -815,8 +814,9 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
 
   <div>
     <h1 className="text-2xl font-black">ACE Coach Console</h1>
-    <p className="text-zinc-400 text-sm">
-      Build. Track. Develop.
+    <p className="text-zinc-400 text-sm">Build. Track. Develop.</p>
+  </div>
+</div>
     </p>
   </div>
 </div>
