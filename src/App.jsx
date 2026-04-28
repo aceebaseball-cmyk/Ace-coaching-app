@@ -1245,6 +1245,9 @@ function AthleteSummary({ athlete, duplicateLastWeek, setActiveWeek, openSavedWe
             <div key={p.id} className={`bg-black border rounded-xl p-3 mb-2 ${isActive ? "border-red-600" : "border-zinc-800"}`}>
               <button onClick={() => openSavedWeek(p)} className="text-left w-full">
                 <div className="font-bold flex items-center gap-2">{p.weekName} {isActive && <span className="text-xs text-red-400">ACTIVE</span>}</div>
+                <div className="text-xs text-zinc-400">
+                Phase: {p.phase || "Build"}
+                </div>
                 <div className="text-xs text-zinc-500">Created {p.createdAt}</div>
               </button>
               <div className="flex gap-2 mt-2">
