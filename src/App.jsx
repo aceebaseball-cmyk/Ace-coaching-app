@@ -908,7 +908,7 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
       </button>
     </section>
   );
-}
+
                 <p className="text-zinc-400">{appMode === "coach" ? "Manage athletes → assess → prescribe → save weekly plans" : "Today’s work → completion → velo tracking"}</p>
               </div>
             </div>
