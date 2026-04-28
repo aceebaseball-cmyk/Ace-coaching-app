@@ -1280,7 +1280,9 @@ function SavedWeekModal({ week, onClose, onEdit }) {
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-zinc-950 border border-zinc-800 rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto p-6">
         <div className="flex justify-between gap-4 items-start mb-5">
-          <div><h2 className="text-3xl font-black">{week.weekName}</h2><p className="text-zinc-400">Created {week.createdAt}</p></div>
+          <div><h2 className="text-3xl font-black">{week.weekName}</h2><p className="text-red-400 font-black text-sm uppercase">
+  Phase: {week.phase || "Build"}
+</p><p className="text-zinc-400">Created {week.createdAt}</p></div>
           <div className="flex gap-2"><button onClick={onEdit} className="bg-white text-black rounded-xl px-4 py-2 font-black">Edit Week</button><button onClick={onClose} className="bg-zinc-800 text-white rounded-xl px-4 py-2 font-black">Close</button></div>
         </div>
         <div className="grid md:grid-cols-2 gap-4">
