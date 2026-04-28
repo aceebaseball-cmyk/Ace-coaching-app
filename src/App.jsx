@@ -845,6 +845,7 @@ const throwingSchedule =
             addDailyCompletion={addDailyCompletion}
             addVeloEntry={addVeloEntry}
             updateAthleteNotes={updateAthleteNotes}
+            setActiveStep={setActiveStep}
           />
         )}
 
@@ -1047,7 +1048,7 @@ function AthleteMode({ athletes, lockedAthleteId, addDailyCompletion, addVeloEnt
   );
 }
 
-function AthleteManager({ profile, setProfile, showAddAthlete, setShowAddAthlete, saveAthlete, athletes, activeAthleteId, setActiveAthleteId, duplicateLastWeek, setActiveWeek, openSavedWeek, viewingWeek, setViewingWeek, editSavedWeek, openAthletePreview, addDailyCompletion, addVeloEntry, updateAthleteNotes }) {
+function AthleteManager({ profile, setProfile, showAddAthlete, setShowAddAthlete, saveAthlete, athletes, activeAthleteId, setActiveAthleteId, duplicateLastWeek, setActiveWeek, openSavedWeek, viewingWeek, setViewingWeek, editSavedWeek, openAthletePreview, addDailyCompletion, addVeloEntry, updateAthleteNotes, setActiveStep }) {
   return (
     <section>
       <h2 className="text-2xl font-black mb-4">Athlete Manager</h2>
