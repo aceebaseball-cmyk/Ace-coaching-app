@@ -804,12 +804,22 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
         <header className="mb-6 border-b border-red-700/50 pb-5">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white p-2 shadow-xl shadow-red-950/30 flex items-center justify-center">
-                <img src="/mnt/data/Official ACE logo(4).png" alt="ACE logo" className="w-full h-full object-contain" />
-              </div>
-              <div>
-               function Assessment({ activeAthlete, profile, setProfile, primaryIssues, setPrimaryIssues, secondaryIssues, setSecondaryIssues, athleteType, setAthleteType, primarySoreness, setPrimarySoreness, toggle, saveAssessmentToAthlete }) {
-  return (
+             <div className="flex items-center gap-4">
+  <div className="w-16 h-16 rounded-2xl bg-white p-2 shadow-xl shadow-red-950/30 flex items-center justify-center">
+    <img
+      src="/ace-logo.png"
+      alt="ACE logo"
+      className="w-full h-full object-contain"
+    />
+  </div>
+
+  <div>
+    <h1 className="text-2xl font-black">ACE Coach Console</h1>
+    <p className="text-zinc-400 text-sm">
+      Build. Track. Develop.
+    </p>
+  </div>
+</div>
     <section className="space-y-5">
       <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
         <h2 className="text-2xl font-black mb-2">Assessment</h2>
