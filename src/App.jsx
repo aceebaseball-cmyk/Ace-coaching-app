@@ -808,7 +808,98 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
                 <img src="/mnt/data/Official ACE logo(4).png" alt="ACE logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight">{appMode === "coach" ? "ACE Coach Console" : "ACE Athlete Portal"}</h1>
+               function Assessment({ activeAthlete, profile, setProfile, primaryIssues, setPrimaryIssues, secondaryIssues, setSecondaryIssues, athleteType, setAthleteType, primarySoreness, setPrimarySoreness, toggle, saveAssessmentToAthlete }) {
+  return (
+    <section className="space-y-5">
+      <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
+        <h2 className="text-2xl font-black mb-2">Assessment</h2>
+        <p className="text-zinc-400">
+          {activeAthlete ? `Active athlete: ${activeAthlete.name}` : "No athlete selected. Select an athlete before saving."}
+        </p>
+      </div>
+
+      <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
+        <h2 className="text-xl font-black mb-2">Assessment Checklist</h2>
+        <p className="text-zinc-400 mb-4">
+          Select at least one Primary Issue. Red = Primary, gray = Secondary, white = Athlete Type.
+        </p>
+
+        {assessmentSections.filter((s) => s.tags).map((s) => (
+          <div key={s.title} className="mb-5">
+            <h3 className="font-black text-red-400 mb-2">{s.title}</h3>
+            <div className="flex flex-wrap gap-2">
+              {s.tags.map((t) => {
+                const isType = s.title === "Athlete Type";
+                const isPrimary = primaryIssues.includes(t);
+                const isSecondary = secondaryIssues.includes(t);
+                const isAthleteType = athleteType.includes(t);
+
+                return (
+                  <button
+                    key={t}
+                    onClick={() => {
+                      if (isType) return toggle(t, athleteType, setAthleteType);
+                      if (isPrimary) {
+                        setPrimaryIssues(primaryIssues.filter((x) => x !== t));
+                        setSecondaryIssues([...secondaryIssues, t]);
+                      } else if (isSecondary) {
+                        setSecondaryIssues(secondaryIssues.filter((x) => x !== t));
+                      } else {
+                        setPrimaryIssues([...primaryIssues, t]);
+                      }
+                    }}
+                    className={`rounded-full border px-3 py-2 text-sm ${
+                      isPrimary
+                        ? "bg-red-700 border-red-500"
+                        : isSecondary
+                        ? "bg-zinc-700 border-zinc-500"
+                        : isAthleteType
+                        ? "bg-white text-black border-white"
+                        : "bg-black border-zinc-800"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
+        <div className="font-black text-red-400 mb-2">Primary Soreness / Build-Up Area</div>
+        <p className="text-zinc-500 text-sm mb-3">
+          Select what needs the most arm-care attention this week.
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          {["Front Shoulder", "Back Shoulder", "Elbow / Biceps", "Forearm", "Lat / Triceps", "Neck / Trap", "Scap / Upper Back"].map((s) => (
+            <button
+              key={s}
+              onClick={() => toggle(s, primarySoreness, setPrimarySoreness)}
+              className={`rounded-full border px-3 py-2 text-sm ${
+                primarySoreness.includes(s)
+                  ? "bg-red-700 border-red-500"
+                  : "bg-black border-zinc-800"
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <button
+        onClick={saveAssessmentToAthlete}
+        disabled={!activeAthlete || primaryIssues.length === 0}
+        className="w-full bg-red-700 text-white rounded-xl py-3 font-black disabled:opacity-40"
+      >
+        Save Assessment
+      </button>
+    </section>
+  );
+}
                 <p className="text-zinc-400">{appMode === "coach" ? "Manage athletes → assess → prescribe → save weekly plans" : "Today’s work → completion → velo tracking"}</p>
               </div>
             </div>
