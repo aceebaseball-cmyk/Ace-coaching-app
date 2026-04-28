@@ -1328,7 +1328,7 @@ function Assessment({ activeAthlete, profile, setProfile, primaryIssues, setPrim
         <p className="text-zinc-400 mb-4">{activeAthlete ? `Active: ${activeAthlete.name}` : "No athlete selected. You can still assess."}</p>
         {Object.keys(profile).map((k) => <input key={k} placeholder={k.replace(/([A-Z])/g, " $1")} value={profile[k]} onChange={(e) => setProfile({ ...profile, [k]: e.target.value })} className="w-full mb-3 bg-black border border-zinc-800 rounded-xl px-3 py-2 outline-none focus:border-red-600" />)}
         <div className="mb-4"><div className="font-black text-red-400 mb-2">Primary Soreness / Build-Up Area</div><p className="text-zinc-500 text-sm mb-2">Select what needs the most arm-care attention this week.</p><div className="flex flex-wrap gap-2">{["Front Shoulder", "Back Shoulder", "Elbow / Biceps", "Forearm", "Lat / Triceps", "Neck / Trap", "Scap / Upper Back"].map((s) => <button key={s} onClick={() => toggle(s, primarySoreness, setPrimarySoreness)} className={`rounded-full border px-3 py-2 text-sm ${primarySoreness.includes(s) ? "bg-red-700 border-red-500" : "bg-black border-zinc-800"}`}>{s}</button>)}</div></div>
-       <div className="mt-6">
+       
  
       <div className="lg:col-span-2 rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
         <h2 className="text-xl font-black mb-2">Assessment Checklist</h2><p className="text-zinc-400 mb-4">Select at least one Primary Issue. Red = Primary, gray = Secondary, white = Athlete Type.</p>
