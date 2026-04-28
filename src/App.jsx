@@ -411,6 +411,7 @@ const emptyProfile = {
     setActiveAthleteId(newAthlete.id);
     setNewAthleteProfile(emptyProfile);
     setShowAddAthlete(false);
+    setActiveStep(2);
     setSaveStatus(`Created athlete: ${newAthlete.name}.`);
   
   if (session?.user) {
