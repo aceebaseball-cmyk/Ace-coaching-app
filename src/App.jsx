@@ -817,7 +817,6 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
     <p className="text-zinc-400 text-sm">Build. Track. Develop.</p>
   </div>
 </div>
-    </p>
   </div>
 </div>
     <section className="space-y-5">
