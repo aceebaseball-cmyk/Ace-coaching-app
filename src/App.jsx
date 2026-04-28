@@ -802,7 +802,7 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.05]">
   <div className="text-[34vw] font-black tracking-tighter">ACE</div>
 </div>
-  <div className="flex items-center justify-between gap-4 flex-wrap">
+
     <div className="flex items-center gap-4">
       <div className="w-16 h-16 rounded-2xl bg-white p-2 shadow-xl shadow-red-950/30 flex items-center justify-center">
         <img
