@@ -625,10 +625,32 @@ const emptyProfile = {
 
 const throwingSchedule =
   throwingScheduleByPhase[phase] || throwingScheduleByPhase.Build;
-    const primaryMatched = drills.filter((d) => d.fixes.some((f) => primaryIssues.includes(f)));
-    const secondaryMatched = drills.filter((d) => d.fixes.some((f) => secondaryIssues.includes(f)));
-    const fallbackMatched = recommendedDrills;
+    const phaseDrillTypes = {
+  Build: ["Awareness", "Movement", "Constraint"],
+  Strength: ["Constraint", "Dynamic", "Power"],
+  Maintain: ["Dynamic", "Integration", "Game Transfer"],
+  Deload: ["Awareness", "Control", "Movement"],
+};
 
+const activePhaseTypes = phaseDrillTypes[phase] || phaseDrillTypes.Build;
+
+const primaryMatched = drills.filter(
+  (d) =>
+    d.fixes.some((f) => primaryIssues.includes(f)) &&
+    activePhaseTypes.includes(d.type)
+);
+
+const secondaryMatched = drills.filter(
+  (d) =>
+    d.fixes.some((f) => secondaryIssues.includes(f)) &&
+    activePhaseTypes.includes(d.type)
+);
+
+const phaseMatchedDrills = recommendedDrills.filter((d) =>
+  activePhaseTypes.includes(d.type)
+);
+
+const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recommendedDrills;
     const pickByType = (pool, types, limit) => {
       const picked = [];
       types.forEach((type) => {
