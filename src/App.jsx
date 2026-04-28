@@ -538,12 +538,13 @@ const emptyProfile = {
       setSaveStatus("Create or select an athlete before saving.");
       return;
     }
-    const savedWeek = {
-      id: Date.now(),
-      weekName: weekName || `Week ${activeAthlete.plans.length + 1}`,
-      createdAt: new Date().toLocaleDateString(),
-      plan: JSON.parse(JSON.stringify(plan)),
-    };
+   const savedWeek = {
+  id: Date.now(),
+  weekName: weekName || `Week ${activeAthlete.plans.length + 1}`,
+  phase,
+  createdAt: new Date().toLocaleDateString(),
+  plan: JSON.parse(JSON.stringify(plan)),
+};
     setAthletes((prev) =>
       prev.map((a) =>
         a.id === activeAthlete.id ? { ...a, activeWeekId: savedWeek.id, plans: [savedWeek, ...a.plans] } : a
