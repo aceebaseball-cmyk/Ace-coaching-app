@@ -550,6 +550,7 @@ const emptyProfile = {
       )
     );
     setSaveStatus(`Saved ${savedWeek.weekName} to ${activeAthlete.name}.`);
+    setActiveStep(1);
   };
 
   const setActiveWeek = (weekId) => {
