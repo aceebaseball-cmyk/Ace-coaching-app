@@ -981,7 +981,6 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
           />
         )}
       </div>
-    </div>
   );
 }
 
