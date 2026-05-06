@@ -844,7 +844,7 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
       </button>
     )}
  
-</header><header className="mb-6 border-b border-red-700/50 pb-5">
+<header className="mb-6 border-b border-red-700/50 pb-5">
   <div className="flex items-center justify-between gap-4 flex-wrap">
     <div className="flex items-center gap-4">
       <div className="w-16 h-16 rounded-2xl bg-white p-2 shadow-xl shadow-red-950/30 flex items-center justify-center">
