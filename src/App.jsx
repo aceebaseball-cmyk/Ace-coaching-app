@@ -410,8 +410,12 @@ export default function AceCoachAppPreview() {
 
   return (
     <main className="min-h-screen bg-black text-white p-4 md:p-8 relative overflow-hidden">
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.05]">
-        <div className="text-[34vw] font-black tracking-tighter">ACE</div>
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.04]">
+        <img
+          src="/ace-logo.png"
+          alt="ACE watermark"
+          className="w-[70vw] max-w-[900px] object-contain"
+        />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto">
