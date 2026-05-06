@@ -980,7 +980,6 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
             clearCurrentPlan={clearCurrentPlan}
           />
         )}
-      </div>
   );
 }
 
