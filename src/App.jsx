@@ -884,10 +884,7 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
     )}
   </div>
 </header>
-              </button>
-            )}
-          </div>
-        </header>
+             
 
         {appMode === "coach" && (
           <nav className="grid md:grid-cols-5 gap-3 mb-6">
