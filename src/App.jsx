@@ -798,52 +798,7 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
     assignToDay(day, data.item, data.kind);
   };
 
- return (
-  <div className="relative">
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.05]">
-      <div className="text-[34vw] font-black tracking-tighter">ACE</div>
-    </div>
 
-    <div className="flex items-center gap-4">
-      <div className="w-16 h-16 rounded-2xl bg-white p-2 shadow-xl shadow-red-950/30 flex items-center justify-center">
-        <img
-          src="/ace-logo.png"
-          alt="ACE logo"
-          className="w-full h-full object-contain"
-        />
-      </div>
-
-      <div>
-        <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
-          {appMode === "coach" ? "ACE Coach Console" : "ACE Athlete Portal"}
-        </h1>
-
-        <p className="text-zinc-400">
-          {appMode === "coach"
-            ? "Manage athletes → assess → prescribe → save weekly plans"
-            : "Today’s work → completion → velo tracking"}
-        </p>
-      </div>
-    </div>
-</div>
-);
-
-    {appMode === "coach" ? (
-      <div className="bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-3 text-sm text-zinc-400">
-        Coach View
-      </div>
-    ) : (
-      <button
-        onClick={() => {
-          setAppMode("coach");
-          setPreviewAthleteId(null);
-        }}
-        className="bg-white text-black rounded-2xl px-4 py-3 text-sm font-black"
-      >
-        Back to Coach View
-      </button>
-    )}
- 
 <header className="mb-6 border-b border-red-700/50 pb-5">
   <div className="flex items-center justify-between gap-4 flex-wrap">
     <div className="flex items-center gap-4">
