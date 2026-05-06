@@ -799,7 +799,7 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
   };
 
  return (
-  <>
+  <div className="relative">
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.05]">
       <div className="text-[34vw] font-black tracking-tighter">ACE</div>
     </div>
@@ -825,7 +825,7 @@ const fallbackMatched = phaseMatchedDrills.length ? phaseMatchedDrills : recomme
         </p>
       </div>
     </div>
-  </>
+</div>
 );
 
     {appMode === "coach" ? (
