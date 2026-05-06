@@ -266,9 +266,27 @@ export default function AceCoachAppPreview() {
       setSaveStatus("Select an athlete and at least one primary issue.");
       return;
     }
-    const assessment = { id: Date.now(), date: new Date().toLocaleDateString(), profile, primaryIssues, secondaryIssues, athleteType, primarySoreness };
-    setAthletes((prev) => prev.map((a) => (a.id === activeAthlete.id ? { ...a, assessments: [assessment, ...(a.assessments || [])] } : a)));
-    setSaveStatus(`Assessment saved for ${activeAthlete.name}.`);
+
+    const assessment = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString(),
+      profile,
+      primaryIssues,
+      secondaryIssues,
+      athleteType,
+      primarySoreness,
+    };
+
+    setAthletes((prev) =>
+      prev.map((a) =>
+        a.id === activeAthlete.id
+          ? { ...a, assessments: [assessment, ...(a.assessments || [])] }
+          : a
+      )
+    );
+
+    setSaveStatus(`Assessment saved for ${activeAthlete.name}. Next: pick drills.`);
+    setActiveStep(3);
   };
 
   const autoBuildWeek = () => {
