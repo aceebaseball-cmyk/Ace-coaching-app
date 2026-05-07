@@ -669,8 +669,39 @@ function AuthBox({ loginEmail, setLoginEmail, loginPassword, setLoginPassword, l
   );
 }
 
+function getAthleteMetrics(athlete) {
+  const activeWeek = athlete?.activeWeekId
+    ? (athlete.plans || []).find((week) => week.id === athlete.activeWeekId)
+    : null;
+
+  const activeWeekLogs = (athlete?.dailyCompletions || []).filter(
+    (log) => log.weekId === activeWeek?.id
+  );
+
+  const completedDays = new Set(activeWeekLogs.map((log) => log.day));
+  const completionPercent = activeWeek ? Math.round((completedDays.size / 7) * 100) : 0;
+
+  let currentStreak = 0;
+  for (let i = days.length - 1; i >= 0; i -= 1) {
+    if (completedDays.has(days[i])) currentStreak += 1;
+    else if (currentStreak > 0) break;
+  }
+
+  const lastVelo = athlete?.veloLog?.length ? athlete.veloLog[0] : null;
+  const latestAssessment = athlete?.assessments?.length ? athlete.assessments[0] : null;
+
+  return {
+    activeWeek,
+    completionPercent,
+    currentStreak,
+    lastVelo,
+    latestAssessment,
+  };
+}
+
 function AthleteManager({ profile, setProfile, showAddAthlete, setShowAddAthlete, saveAthlete, athletes, activeAthleteId, selectAthlete, duplicateLastWeek, setActiveWeek, viewingWeek, setViewingWeek, editSavedWeek, openAthletePreview, updateAthleteNotes, setActiveStep }) {
   const activeAthlete = athletes.find((a) => String(a.id) === String(activeAthleteId));
+  const metrics = getAthleteMetrics(activeAthlete);
 
   return (
     <section className="grid lg:grid-cols-3 gap-5">
@@ -718,10 +749,12 @@ function AthleteManager({ profile, setProfile, showAddAthlete, setShowAddAthlete
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-3">
-              <Stat label="Current Velo" value={activeAthlete.currentVelo ? `${activeAthlete.currentVelo} mph` : "--"} />
-              <Stat label="Target Velo" value={activeAthlete.targetVelo ? `${activeAthlete.targetVelo} mph` : "--"} />
-              <Stat label="Plans Saved" value={(activeAthlete.plans || []).length} />
+            <div className="grid md:grid-cols-5 gap-3">
+              <Stat label="Active Week" value={metrics.activeWeek?.weekName || "None"} />
+              <Stat label="Completion" value={metrics.activeWeek ? `${metrics.completionPercent}%` : "--"} />
+              <Stat label="Streak" value={`${metrics.currentStreak} days`} />
+              <Stat label="Last Velo" value={metrics.lastVelo?.velo ? `${metrics.lastVelo.velo} mph` : "--"} />
+              <Stat label="Latest Assessment" value={metrics.latestAssessment?.date || "None"} />
             </div>
 
             <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
@@ -997,13 +1030,31 @@ function ArmCare({ items, recommendedItems, selected, setSelected, onDragStart }
 function WeeklyBuilder({ activeAthlete, weekName, setWeekName, phase, setPhase, plan, setPlan, selectedDrills, selectedArm, recommendedDrills, recommendedArmCare, onDragStart, onDrop, removeFromDay, saveWeekToAthlete, autoBuildWeek, clearCurrentPlan }) {
   const updateDay = (day, field, value) => setPlan((prev) => ({ ...prev, [day]: { ...prev[day], [field]: value } }));
 
+  const weekTotals = useMemo(() => {
+    const allDays = Object.values(plan || {});
+    const drillCount = allDays.reduce((total, day) => total + (day.drills?.length || 0), 0);
+    const armCount = allDays.reduce((total, day) => total + (day.arm?.length || 0), 0);
+    const throwingDays = allDays.filter((day) => day.throwing && day.throwing !== "Off").length;
+    const bullpenDays = allDays.filter((day) => day.throwing === "Bullpen" || day.type === "Bullpen Day").length;
+    return { drillCount, armCount, throwingDays, bullpenDays };
+  }, [plan]);
+
   return (
     <section>
-      <div className="flex justify-between gap-4 flex-wrap mb-4">
-        <div>
-          <h2 className="text-2xl font-black">Weekly Builder</h2>
-          <p className="text-zinc-400">{activeAthlete ? `Saving to ${activeAthlete.name}` : "Select an athlete before saving."}</p>
+      <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5 mb-5">
+        <div className="flex justify-between gap-4 flex-wrap mb-4">
+          <div>
+            <h2 className="text-2xl font-black">Weekly Builder</h2>
+            <p className="text-zinc-400">{activeAthlete ? `Saving to ${activeAthlete.name}` : "Select an athlete before saving."}</p>
+          </div>
+          <div className="grid grid-cols-4 gap-2 text-center text-xs">
+            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2"><div className="text-zinc-500">Throw</div><div className="font-black text-white">{weekTotals.throwingDays}</div></div>
+            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2"><div className="text-zinc-500">Pens</div><div className="font-black text-white">{weekTotals.bullpenDays}</div></div>
+            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2"><div className="text-zinc-500">Drills</div><div className="font-black text-white">{weekTotals.drillCount}</div></div>
+            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2"><div className="text-zinc-500">Arm</div><div className="font-black text-white">{weekTotals.armCount}</div></div>
+          </div>
         </div>
+
         <div className="flex gap-2 flex-wrap">
           <input value={weekName} onChange={(e) => setWeekName(e.target.value)} className="bg-black border border-zinc-800 rounded-xl px-4 py-2" />
           <select value={phase} onChange={(e) => setPhase(e.target.value)} className="bg-black border border-zinc-800 rounded-xl px-4 py-2">
@@ -1014,7 +1065,8 @@ function WeeklyBuilder({ activeAthlete, weekName, setWeekName, phase, setPhase, 
           </select>
           <button onClick={autoBuildWeek} className="bg-red-700 text-white rounded-xl px-4 py-2 font-black">Auto Build</button>
           <button onClick={clearCurrentPlan} className="bg-zinc-800 text-white rounded-xl px-4 py-2 font-black">Clear</button>
-          <button onClick={saveWeekToAthlete} className="bg-white text-black rounded-xl px-4 py-2 font-black">Save Week</button>
+          <button onClick={saveWeekToAthlete} className="bg-white text-black rounded-xl px-4 py-2 font-black">Save + Return Home</button>
+          </div>
         </div>
       </div>
 
@@ -1030,8 +1082,16 @@ function WeeklyBuilder({ activeAthlete, weekName, setWeekName, phase, setPhase, 
         {days.map((day) => {
           const dayPlan = plan[day];
           return (
-            <div key={day} onDragOver={(e) => e.preventDefault()} onDrop={(e) => onDrop(e, day)} className="rounded-3xl bg-zinc-950 border border-zinc-800 p-4 min-h-96">
-              <h3 className="font-black text-red-400 mb-3">{day}</h3>
+            <div key={day} onDragOver={(e) => e.preventDefault()} onDrop={(e) => onDrop(e, day)} className="rounded-3xl bg-zinc-950 border border-zinc-800 p-4 min-h-96 hover:border-red-900/70 transition">
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <div>
+                  <h3 className="font-black text-red-400">{day}</h3>
+                  <p className="text-xs text-zinc-600">{dayPlan.drills.length} drills · {dayPlan.arm.length} arm care</p>
+                </div>
+                <span className={`text-[10px] uppercase font-black rounded-full px-2 py-1 ${dayPlan.throwing === "Off" ? "bg-zinc-800 text-zinc-400" : dayPlan.throwing === "Bullpen" ? "bg-red-700 text-white" : "bg-white text-black"}`}>
+                  {dayPlan.throwing || "Off"}
+                </span>
+              </div>
               <select value={dayPlan.type} onChange={(e) => updateDay(day, "type", e.target.value)} className="w-full bg-black border border-zinc-800 rounded-xl px-2 py-2 mb-2 text-sm">
                 {dayTypes.map((type) => <option key={type}>{type}</option>)}
               </select>
@@ -1204,9 +1264,19 @@ function WeekPreview({ week }) {
 
 function Stat({ label, value }) {
   return (
-    <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
-      <div className="text-xs text-zinc-500 uppercase">{label}</div>
-      <div className="text-2xl font-black">{value}</div>
+    <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5 hover:border-zinc-600 transition">
+      <div className="text-xs text-zinc-500 uppercase tracking-wide">{label}</div>
+      <div className="text-2xl font-black truncate">{value}</div>
+    </div>
+  );
+}
+
+function EmptyState({ title, message, action }) {
+  return (
+    <div className="rounded-3xl bg-zinc-950 border border-dashed border-zinc-800 p-8 text-center">
+      <div className="text-xl font-black text-white mb-2">{title}</div>
+      <p className="text-zinc-500 max-w-xl mx-auto mb-4">{message}</p>
+      {action}
     </div>
   );
 }
