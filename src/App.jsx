@@ -28,44 +28,170 @@ const assessmentSections = [
   { title: "Athlete Type", tags: ["High Effort Thrower", "Low Intent Mover", "Strong But Inefficient", "Young Developing Athlete", "Unstable Mover"] },
 ];
 
-const drills = [
-  drill("Load & Lift Drill", 1, "Back Leg", "Awareness", ["Back Leg Collapse", "Poor Back Side Load", "Balance Issue"], "Low", "Dry Work", "2–3 x 5", "Feel the back side load without dropping early."),
-  drill("Peak Lift Holds", 1, "Setup", "Awareness", ["Balance Issue", "Posture Issue", "Poor Setup"], "Low", "Dry Work", "3 x 5 sec", "Own the position before moving."),
-  drill("Slow Motion Delivery", 1, "Timing", "Awareness", ["Rushed Tempo", "Poor Hip Shoulder Timing", "Poor Repeatability"], "Low", "Dry Work / Flat Ground", "2 x 4", "Move at 50% and find where the pattern breaks."),
-  drill("Step Back Drill", 2, "Direction", "Movement", ["Back Leg Collapse", "Poor Direction", "Rushed Tempo"], "Medium", "Flat Ground", "2–3 x 5 throws", "Create rhythm and move forward instead of down."),
-  drill("Rocker Step Drill", 2, "Rhythm", "Movement", ["No Flow", "Rushed Tempo", "Poor Direction"], "Medium", "Flat Ground", "2 x 6 throws", "Feel forward move without rushing."),
-  drill("Walking Windup", 2, "Rhythm", "Movement", ["Robotic Delivery", "No Flow", "Low Intent Mover"], "Medium", "Flat Ground", "2 x 5 throws", "Add natural athletic movement."),
-  drill("Wall Back Leg Drill", 3, "Back Leg", "Constraint", ["Back Leg Collapse", "Posture Issue", "Poor Back Side Load"], "Low", "Dry Work", "2 x 5", "Use the wall to prevent early collapse."),
-  drill("Box Stride Drill", 3, "Lead Leg Block", "Constraint", ["Poor Lead Leg Block", "Soft Front Leg", "Poor Direction"], "Medium", "Flat Ground", "2 x 5", "Move into the front side without drifting."),
-  drill("Stride Direction Line Drill", 3, "Direction", "Constraint", ["Poor Direction", "Landing Open", "Spinning Off"], "Medium", "Flat Ground", "2 x 6", "Stay on the line into foot strike."),
-  drill("Separation Step Drill", 2, "Timing", "Movement", ["Poor Separation", "Opening Early", "Late Arm"], "Medium", "Flat Ground", "2 x 5", "Feel hips move while shoulders stay closed."),
-  drill("Closed Front Side Throwing", 4, "Front Side", "Integration", ["Opening Early", "Glove Pull", "Arm-Side Miss"], "Medium", "Flat Ground", "2 x 6", "Throw while holding the front side longer."),
-  drill("Step-Behind Throws", 4, "Energy Transfer", "Dynamic", ["Muscling Arm", "Low Intent Mover", "No Flow"], "High", "Flat Ground", "2 x 5", "Let momentum create arm speed."),
-  drill("Momentum Throws", 4, "Energy Transfer", "Dynamic", ["Muscling Arm", "Using Lower Half Incorrectly", "Low Intent Mover"], "High", "Flat Ground", "2 x 5", "Let the body create the arm speed."),
-  drill("Target Box Drill", 1, "Command", "Awareness", ["Command Issue", "Arm-Side Miss", "Glove-Side Miss"], "Low-Medium", "Flat Ground", "2 x 8", "Define the target window."),
-  drill("Count-Based Bullpen", 5, "Game IQ", "Game Transfer", ["Command Issue", "Game Feel", "Poor Repeatability"], "Medium-High", "Mound", "3–5 counts", "Apply command inside game counts."),
+const baseDrills = [
+  ["Load & Lift Drill", 1, "Back Leg", "Awareness", ["Back Leg Collapse", "Poor Back Side Load", "Balance Issue"], "Low", "Dry Work", "2–3 x 5", "Feel the back side load without dropping early."],
+  ["Peak Lift Holds", 1, "Setup", "Awareness", ["Balance Issue", "Posture Issue", "Poor Setup"], "Low", "Dry Work", "3 x 5 sec", "Own the position before moving."],
+  ["Slow Motion Delivery", 1, "Timing", "Awareness", ["Rushed Tempo", "Poor Hip Shoulder Timing", "Poor Repeatability"], "Low", "Dry Work / Flat Ground", "2 x 4", "Move at 50% and find where the pattern breaks."],
+  ["Single-Leg Balance Holds", 1, "Setup", "Control", ["Balance Issue", "Unstable Mover", "Posture Issue"], "Low", "Dry Work", "2 x 20 sec", "Build stability before adding intent."],
+  ["Split Stance Holds", 1, "Lower Half", "Control", ["Poor Direction", "Back Leg Collapse", "Soft Front Leg"], "Low", "Dry Work", "2 x 20 sec", "Feel the body stacked between both legs."],
+  ["Step Back Drill", 2, "Direction", "Movement", ["Back Leg Collapse", "Poor Direction", "Rushed Tempo"], "Medium", "Flat Ground", "2–3 x 5 throws", "Create rhythm and move forward instead of down."],
+  ["Rocker Step Drill", 2, "Rhythm", "Movement", ["No Flow", "Rushed Tempo", "Poor Direction"], "Medium", "Flat Ground", "2 x 6 throws", "Feel forward move without rushing."],
+  ["Walking Windup", 2, "Rhythm", "Movement", ["Robotic Delivery", "No Flow", "Low Intent Mover"], "Medium", "Flat Ground", "2 x 5 throws", "Add natural athletic movement."],
+  ["Toe Tap Load Drill", 2, "Back Leg", "Rhythm", ["Poor Back Side Load", "Rushed Tempo", "Back Leg Collapse"], "Low-Medium", "Dry Work / Flat Ground", "2 x 5", "Use the toe tap to feel rhythm into the back side."],
+  ["Glide Step Drill", 2, "Lower Half", "Movement", ["Pushes Instead Of Moves", "Poor Direction", "Drifting"], "Medium", "Flat Ground", "2 x 5", "Move forward smoothly without a hard drop."],
+  ["Wall Back Leg Drill", 3, "Back Leg", "Constraint", ["Back Leg Collapse", "Posture Issue", "Poor Back Side Load"], "Low", "Dry Work", "2 x 5", "Use the wall to prevent early collapse."],
+  ["Towel Under Heel", 3, "Back Leg", "Constraint", ["Back Leg Collapse", "Poor Back Side Load", "Ground Contact"], "Low", "Dry Work", "2 x 5", "Feel how the back foot interacts with the ground."],
+  ["Box Stride Drill", 3, "Lead Leg Block", "Constraint", ["Poor Lead Leg Block", "Soft Front Leg", "Poor Direction"], "Medium", "Flat Ground", "2 x 5", "Move into the front side without drifting."],
+  ["Slope Direction Drill", 3, "Direction", "Constraint", ["Poor Direction", "Spinning Off", "Drifting"], "Medium", "Mound / Slope", "2 x 5", "Let the slope expose direction leaks."],
+  ["Stick Landing Drill", 3, "Repeatability", "Constraint", ["Poor Repeatability", "Soft Front Leg", "Landing Open"], "Medium", "Flat Ground", "2 x 5", "Own the finish position after the throw."],
+  ["Step-Behind Throws", 4, "Energy Transfer", "Dynamic", ["Muscling Arm", "Low Intent Mover", "No Flow"], "High", "Flat Ground", "2 x 5", "Let momentum create arm speed."],
+  ["Shuffle Throws", 4, "Rhythm", "Dynamic", ["No Flow", "Muscling Arm", "Rushed Tempo"], "Medium-High", "Flat Ground", "2 x 5", "Create rhythm without forcing the arm."],
+  ["Walk-In Throws", 4, "Tempo", "Dynamic", ["Low Intent Mover", "No Flow", "Poor Direction"], "Medium-High", "Flat Ground", "2 x 5", "Build speed naturally before release."],
+  ["Hop To Throw", 4, "Lower Half", "Dynamic", ["Using Lower Half Incorrectly", "Low Intent Mover", "Poor Direction"], "High", "Flat Ground", "2 x 4", "Add athletic intent into the lower half."],
+  ["Med Ball Linear Throws", 4, "Power", "Power", ["Using Lower Half Incorrectly", "Poor Direction", "Energy Transfer"], "Medium-High", "Med Ball", "3 x 5", "Train force to move through the target."],
+  ["Mirror Closed Holds", 1, "Front Side", "Awareness", ["Opening Early", "Glove Pull", "Landing Open"], "Low", "Dry Work", "2 x 5 holds", "Feel closed before moving."],
+  ["Pause At Peak Lift", 1, "Timing", "Awareness", ["Rushed Tempo", "Opening Early", "Balance Issue"], "Low", "Dry Work", "2 x 5", "Control the top before you go."],
+  ["Glove Side Awareness Drill", 1, "Front Side", "Awareness", ["Glove Pull", "Opening Early", "Arm-Side Miss"], "Low", "Dry Work", "2 x 6", "Feel the glove stabilize instead of yank."],
+  ["Walk-Through Closed Drill", 2, "Front Side", "Movement", ["Opening Early", "Poor Direction", "Arm-Side Miss"], "Medium", "Flat Ground", "2 x 5", "Move forward while staying closed longer."],
+  ["Glove Side Resistance Band", 2, "Front Side", "Constraint", ["Glove Pull", "Opening Early", "Poor Separation"], "Low-Medium", "Band", "2 x 8", "Build awareness of front side control."],
+  ["Separation Step Drill", 2, "Timing", "Movement", ["Poor Separation", "Opening Early", "Late Arm"], "Medium", "Flat Ground", "2 x 5", "Feel hips move while shoulders stay closed."],
+  ["Towel Under Arm Drill", 3, "Front Side", "Constraint", ["Glove Pull", "Opening Early", "Arm-Side Miss"], "Low-Medium", "Dry Work", "2 x 5", "Keep the glove side connected longer."],
+  ["Wall Stay Closed Drill", 3, "Front Side", "Constraint", ["Opening Early", "Poor Direction", "Landing Open"], "Low", "Dry Work", "2 x 5", "Use the wall to feel delayed rotation."],
+  ["Stride Direction Line Drill", 3, "Direction", "Constraint", ["Poor Direction", "Landing Open", "Spinning Off"], "Medium", "Flat Ground", "2 x 6", "Stay on the line into foot strike."],
+  ["Separation Throws", 4, "Timing", "Dynamic", ["Poor Separation", "Opening Early", "Poor Hip Shoulder Timing"], "Medium-High", "Flat Ground", "2 x 5", "Create tension before rotation."],
+  ["Closed Front Side Throwing", 4, "Front Side", "Integration", ["Opening Early", "Glove Pull", "Arm-Side Miss"], "Medium", "Flat Ground", "2 x 6", "Throw while holding the front side longer."],
+  ["Med Ball Separation Throws", 4, "Front Side", "Power", ["Poor Separation", "Opening Early", "Energy Transfer"], "Medium-High", "Med Ball", "3 x 5", "Train separation and rotation power."],
+  ["Delayed Rotation Bullpen", 5, "Mound", "Integration", ["Opening Early", "Arm-Side Miss", "Poor Hip Shoulder Timing"], "Medium-High", "Mound", "12–18 pitches", "Transfer delayed rotation to mound work."],
+  ["Target + Timing Throwing", 5, "Command", "Game Transfer", ["Command Issue", "Arm-Side Miss", "Poor Repeatability"], "Medium", "Flat Ground / Mound", "10–15 throws", "Pair timing with target execution."],
+  ["Arm Swing No Ball", 1, "Arm Action", "Awareness", ["Muscling Arm", "Restricted Arm", "Short Forced Arm"], "Low", "Dry Work", "2 x 8", "Let the arm swing without tension."],
+  ["Connection Ball Drill", 1, "Arm Action", "Awareness", ["Long Arm Path", "Restricted Arm", "Muscling Arm"], "Low", "Plyo Ball", "2 x 6", "Feel connected arm movement."],
+  ["Mirror Arm Path", 1, "Arm Action", "Awareness", ["Long Arm Path", "Short Forced Arm", "Late Arm"], "Low", "Dry Work", "2 x 6", "See the arm path before throwing."],
+  ["Rocker Throws", 2, "Arm Action", "Movement", ["Muscling Arm", "No Flow", "Restricted Arm"], "Medium", "Flat Ground", "2 x 6", "Let the arm work with body rhythm."],
+  ["Pivot Pickoffs", 2, "Arm Action", "Movement", ["Late Arm", "Muscling Arm", "Short Forced Arm"], "Medium", "Flat Ground", "2 x 6", "Get the arm up on time from a simple move."],
+  ["Short Arm Path Throws", 2, "Arm Action", "Movement", ["Long Arm Path", "Late Arm", "Poor Repeatability"], "Medium", "Flat Ground", "2 x 5", "Clean up excessive length in the arm path."],
+  ["Step-Behind Loose Arm", 3, "Arm Action", "Dynamic", ["Muscling Arm", "Restricted Arm", "Low Intent Mover"], "High", "Flat Ground", "2 x 5", "Use momentum to loosen the arm."],
+  ["Shuffle Loose Arm", 3, "Arm Action", "Dynamic", ["Muscling Arm", "No Flow", "Rushed Tempo"], "Medium-High", "Flat Ground", "2 x 5", "Match arm swing with body flow."],
+  ["Constraint Ball Throwing", 3, "Arm Action", "Constraint", ["Muscling Arm", "Restricted Arm", "Late Arm"], "Medium", "Plyo Ball", "2 x 6", "Use implement feedback to change arm feel."],
+  ["Plyo Catch & Release", 4, "Arm Action", "Dynamic", ["Late Arm", "Muscling Arm", "Arm Speed"], "Medium-High", "Plyo Ball", "2 x 6", "Train quick arm action without forcing."],
+  ["Momentum Throws", 4, "Energy Transfer", "Dynamic", ["Muscling Arm", "Using Lower Half Incorrectly", "Low Intent Mover"], "High", "Flat Ground", "2 x 5", "Let the body create the arm speed."],
+  ["Target Box Drill", 1, "Command", "Awareness", ["Command Issue", "Arm-Side Miss", "Glove-Side Miss"], "Low-Medium", "Flat Ground", "2 x 8", "Define the target window."],
+  ["Glove Side Target Drill", 2, "Command", "Movement", ["Arm-Side Miss", "Opening Early", "Poor Direction"], "Medium", "Flat Ground", "2 x 6", "Train glove-side execution."],
+  ["Line Drill", 2, "Direction", "Constraint", ["Poor Direction", "Spinning Off", "Arm-Side Miss"], "Medium", "Flat Ground", "2 x 6", "Move straight down the line."],
+  ["Closed Direction Throws", 3, "Direction", "Constraint", ["Opening Early", "Arm-Side Miss", "Poor Direction"], "Medium", "Flat Ground", "2 x 6", "Stay closed and move through target."],
+  ["Step Over Line Drill", 3, "Direction", "Constraint", ["Falling Glove Side", "Spinning Off", "Poor Direction"], "Medium", "Flat Ground", "2 x 5", "Force the stride to work over the line."],
+  ["Catcher Focus Throws", 4, "Command", "Integration", ["Command Issue", "Poor Repeatability", "Rushed Tempo"], "Medium", "Flat Ground / Mound", "10 throws", "Keep focus external on the catcher."],
+  ["Count-Based Bullpen", 5, "Game IQ", "Game Transfer", ["Command Issue", "Game Feel", "Poor Repeatability"], "Medium-High", "Mound", "3–5 counts", "Apply command inside game counts."],
+  ["Competitive Sequences", 5, "Game IQ", "Game Transfer", ["Game Feel", "Execution", "Command Issue"], "Medium-High", "Mound", "3 simulated ABs", "Pitch with sequencing and purpose."],
+  ["Slow To Fast Drill", 2, "Tempo", "Movement", ["Rushed Tempo", "No Flow", "Late Arm"], "Medium", "Flat Ground", "2 x 5", "Build tempo gradually."],
+  ["Tempo Ladder Drill", 3, "Tempo", "Constraint", ["Rushed Tempo", "Inconsistent Tempo", "Poor Repeatability"], "Medium", "Flat Ground", "3 tempos x 3", "Find the best rhythm."],
+  ["Pause Go Drill", 2, "Timing", "Awareness", ["Stuck At Leg Lift", "Rushed Tempo", "Late Arm"], "Low-Medium", "Dry Work / Flat", "2 x 5", "Pause, then move with intent."],
+  ["Rhythm Step Drill", 2, "Rhythm", "Movement", ["No Flow", "Robotic Delivery", "Rushed Tempo"], "Medium", "Flat Ground", "2 x 6", "Use a step to create natural rhythm."],
+  ["Metronome Throws", 3, "Tempo", "Constraint", ["Rushed Tempo", "Inconsistent Tempo", "Poor Repeatability"], "Low-Medium", "Flat Ground", "2 x 6", "Match movement to a consistent tempo."],
+  ["Flow Throws", 4, "Rhythm", "Dynamic", ["No Flow", "Muscling Arm", "Robotic Delivery"], "Medium", "Flat Ground", "2 x 6", "Prioritize smooth connected motion."],
+  ["Continuous Motion Drill", 4, "Rhythm", "Dynamic", ["Stuck At Leg Lift", "No Flow", "Rushed Tempo"], "Medium", "Flat Ground", "2 x 5", "Remove pauses and keep movement alive."],
 ];
 
-const armCare = [
-  arm("Band ER at Side", "Pre-Throw", ["Posterior Cuff", "Infraspinatus", "Teres Minor"], ["External Rotation", "Shoulder Stability", "Arm Prep"], "Low", ["Band"], "2 x 12"),
-  arm("90/90 Band ER", "Pre-Throw", ["Posterior Cuff", "Infraspinatus", "Teres Minor"], ["Layback Prep", "External Rotation", "Shoulder Stability"], "Low", ["Band"], "2 x 10"),
-  arm("Scap Push-Up", "Pre-Throw", ["Serratus Anterior", "Scap Stabilizers"], ["Protraction", "Scap Control", "Shoulder Blade Awareness"], "Low", ["Bodyweight"], "2 x 10"),
-  arm("Serratus Wall Slide", "Pre-Throw", ["Serratus Anterior", "Low Trap"], ["Upward Rotation", "Overhead Prep", "Scap Control"], "Low", ["Wall", "Band"], "2 x 8"),
-  arm("Open Book", "Pre-Throw", ["Thoracic Spine", "Lats", "Pec Minor"], ["Thoracic Rotation", "Mobility", "Separation Prep"], "Low", ["Bodyweight"], "2 x 6 each"),
-  arm("Wrist Pronation/Supination", "Pre-Throw", ["Pronator Teres", "Supinator", "Forearm"], ["Elbow Prep", "Forearm Control", "Grip Prep"], "Low", ["Hammer/DB"], "2 x 10 each"),
-  arm("Prone YTW", "Post-Throw", ["Low Trap", "Mid Trap", "Rear Delt"], ["Scap Strength", "Posture", "Recovery"], "Low", ["Bench/Floor"], "2 x 8"),
-  arm("Catch & Reverse Throw", "Post-Throw", ["Posterior Cuff", "Biceps"], ["Deceleration", "Arm Protection"], "Low-Medium", ["Partner"], "2 x 6"),
-  arm("Banded ER Eccentric", "Post-Throw", ["Posterior Cuff"], ["Decel Strength", "Control"], "Low", ["Band"], "2 x 8"),
-  arm("Biceps Eccentric", "Post-Throw", ["Biceps"], ["Elbow Protection", "Deceleration"], "Low-Medium", ["DB"], "2 x 8"),
-  arm("T-Spine Extension Over Bench", "Recovery Day", ["Thoracic Spine"], ["Mobility", "Extension"], "Low", ["Bench"], "1 min"),
-  arm("Lat Elongation w/ Lateral Flexion", "Recovery Day", ["Lats"], ["Mobility", "Lengthening"], "Low", ["Bodyweight"], "30 sec"),
-  arm("Pec Myofascial Release", "Recovery Day", ["Pec Minor"], ["Soft Tissue", "Recovery"], "Low", ["Ball"], "2 min"),
-  arm("Posterior Wall Angels", "Recovery Day", ["Mid Trap", "Low Trap", "Posterior Shoulder", "Thoracic Spine"], ["Posture", "Mobility", "Scap Control"], "Low", ["Wall"], "2 x 10-20"),
-  arm("Tripod ER/IR Dribbles", "Medium Intent Day", ["Rotator Cuff"], ["Stability", "Coordination"], "Low", ["Ball"], "20 sec"),
-  arm("Low Trap Raise Stability Ball", "Medium Intent Day", ["Low Trap"], ["Scap Strength"], "Low-Medium", ["Ball"], "2 x 12"),
-  arm("Fingertip Farmer Carries", "Intense Throwing Day", ["Forearm"], ["Grip", "Stability"], "Medium", ["DB"], "45 sec"),
-  arm("Forearm Plyo Drops", "Intense Throwing Day", ["Forearm"], ["Elasticity", "Decel"], "Medium", ["Ball"], "max reps"),
+const drills = baseDrills.map((b, i) => ({
+  id: `drill-${i + 1}`,
+  name: b[0],
+  level: b[1],
+  category: b[2],
+  type: b[3],
+  fixes: b[4],
+  intent: b[5],
+  environment: b[6],
+  prescription: b[7],
+  note: b[8],
+  videoUrl: "",
+}));
+
+const armBase = [
+  ["Band ER at Side", "Pre-Throw", ["Posterior Cuff", "Infraspinatus", "Teres Minor"], ["External Rotation", "Shoulder Stability", "Arm Prep"], "Low", ["Band"], "2 x 12"],
+  ["90/90 Band ER", "Pre-Throw", ["Posterior Cuff", "Infraspinatus", "Teres Minor"], ["Layback Prep", "External Rotation", "Shoulder Stability"], "Low", ["Band"], "2 x 10"],
+  ["Band IR at Side", "Pre-Throw", ["Subscapularis", "Anterior Shoulder"], ["Internal Rotation", "Shoulder Prep", "Control"], "Low", ["Band"], "2 x 12"],
+  ["Scap Push-Up", "Pre-Throw", ["Serratus Anterior", "Scap Stabilizers"], ["Protraction", "Scap Control", "Shoulder Blade Awareness"], "Low", ["Bodyweight"], "2 x 10"],
+  ["Serratus Wall Slide", "Pre-Throw", ["Serratus Anterior", "Low Trap"], ["Upward Rotation", "Overhead Prep", "Scap Control"], "Low", ["Wall", "Band"], "2 x 8"],
+  ["Foam Roller Wall Slide", "Pre-Throw", ["Serratus Anterior", "Low Trap", "Thoracic Spine"], ["Upward Rotation", "Mobility", "Scap Control"], "Low", ["Foam Roller"], "2 x 8"],
+  ["Prone Y Raise", "Pre-Throw", ["Low Trap", "Mid Trap", "Posterior Shoulder"], ["Scap Upward Rotation", "Posture", "Arm Path Support"], "Low", ["Bench/Floor"], "2 x 8"],
+  ["Trap 3 Raise", "Pre-Throw", ["Low Trap", "Mid Trap"], ["Scap Control", "Posture", "Overhead Prep"], "Low", ["Bench"], "2 x 8"],
+  ["Open Book", "Pre-Throw", ["Thoracic Spine", "Lats", "Pec Minor"], ["Thoracic Rotation", "Mobility", "Separation Prep"], "Low", ["Bodyweight"], "2 x 6 each"],
+  ["Quadruped T-Spine Rotation", "Pre-Throw", ["Thoracic Spine", "Obliques"], ["Rotation", "Mobility", "Separation Prep"], "Low", ["Bodyweight"], "2 x 6 each"],
+  ["Wrist Pronation/Supination", "Pre-Throw", ["Pronator Teres", "Supinator", "Forearm"], ["Elbow Prep", "Forearm Control", "Grip Prep"], "Low", ["Hammer/DB"], "2 x 10 each"],
+  ["Wrist Flexion/Extension Prep", "Pre-Throw", ["Wrist Flexors", "Wrist Extensors", "Forearm"], ["Elbow Prep", "Blood Flow", "Forearm Prep"], "Low", ["DB/Band"], "2 x 12"],
+  ["Split Stance Rotations", "Pre-Throw", ["Obliques", "Thoracic Spine", "Core"], ["Rotation", "Separation Prep", "Core Control"], "Low", ["Bodyweight"], "2 x 8 each"],
+  ["Dead Bug Breathing", "Pre-Throw", ["Core", "Diaphragm"], ["Core Control", "Breathing", "Positioning"], "Low", ["Bodyweight"], "2 x 6"],
+  ["External Rotation + Press", "Pre-Throw", ["Posterior Cuff", "Serratus", "Low Trap"], ["External Rotation", "Overhead Prep", "Scap Control"], "Low-Medium", ["Band/DB"], "2 x 8"],
+  ["Sideways Internal Rotation Press", "Pre-Throw", ["Subscapularis", "Serratus", "Core"], ["Internal Rotation", "Shoulder Prep", "Control"], "Low-Medium", ["Band"], "2 x 8"],
+  ["Overhead Hands Together Press", "Pre-Throw", ["Serratus", "Low Trap", "Thoracic Spine"], ["Overhead Prep", "Scap Control", "Mobility"], "Low", ["Bodyweight/Light Ball"], "2 x 8"],
+  ["T-Spine Rotations", "Pre-Throw", ["Thoracic Spine", "Obliques"], ["Rotation", "Mobility", "Separation Prep"], "Low", ["Bodyweight"], "2 x 8 each"],
+  ["Prone YTW", "Post-Throw", ["Low Trap", "Mid Trap", "Rear Delt"], ["Scap Strength", "Posture", "Recovery"], "Low", ["Bench/Floor"], "2 x 8"],
+  ["Catch & Reverse Throw", "Post-Throw", ["Posterior Cuff", "Biceps"], ["Deceleration", "Arm Protection"], "Low-Medium", ["Partner"], "2 x 6"],
+  ["Banded ER Eccentric", "Post-Throw", ["Posterior Cuff"], ["Decel Strength", "Control"], "Low", ["Band"], "2 x 8"],
+  ["Biceps Eccentric", "Post-Throw", ["Biceps"], ["Elbow Protection", "Deceleration"], "Low-Medium", ["DB"], "2 x 8"],
+  ["Face Pull", "Post-Throw", ["Rear Delt", "Mid Trap"], ["Posture", "Scap Strength"], "Low-Medium", ["Band/Cable"], "2 x 12"],
+  ["Band Pull Apart", "Post-Throw", ["Rear Delt", "Rhomboids"], ["Upper Back", "Posture"], "Low", ["Band"], "2 x 15"],
+  ["T-Spine Extension Over Bench", "Recovery Day", ["Thoracic Spine"], ["Mobility", "Extension"], "Low", ["Bench"], "1 min"],
+  ["Lat Elongation w/ Lateral Flexion", "Recovery Day", ["Lats"], ["Mobility", "Lengthening"], "Low", ["Bodyweight"], "30 sec"],
+  ["Pec Myofascial Release", "Recovery Day", ["Pec Minor"], ["Soft Tissue", "Recovery"], "Low", ["Ball"], "2 min"],
+  ["Rhomboid Myofascial Release", "Recovery Day", ["Rhomboids"], ["Soft Tissue", "Recovery"], "Low", ["Ball"], "2 min"],
+  ["Subscap Self Release", "Recovery Day", ["Subscapularis"], ["Soft Tissue", "Mobility"], "Low", ["Manual"], "1 min"],
+  ["ER End Range Lift Overs", "Recovery Day", ["Posterior Cuff"], ["End Range Control"], "Low", ["Bodyweight"], "2 x 10"],
+  ["Tripod ER/IR Dribbles", "Medium Intent Day", ["Rotator Cuff"], ["Stability", "Coordination"], "Low", ["Ball"], "20 sec"],
+  ["Low Trap Raise Stability Ball", "Medium Intent Day", ["Low Trap"], ["Scap Strength"], "Low-Medium", ["Ball"], "2 x 12"],
+  ["Serratus Wall Slides", "Medium Intent Day", ["Serratus"], ["Upward Rotation"], "Low", ["Wall"], "2 x 15"],
+  ["Reverse Bear Crawls", "Medium Intent Day", ["Scap", "Core"], ["Coordination", "Stability"], "Medium", ["Bodyweight"], "20 steps"],
+  ["Fingertip Farmer Carries", "Intense Throwing Day", ["Forearm"], ["Grip", "Stability"], "Medium", ["DB"], "45 sec"],
+  ["Forearm Plyo Drops", "Intense Throwing Day", ["Forearm"], ["Elasticity", "Decel"], "Medium", ["Ball"], "max reps"],
+  ["90/90 to Y w/ Glove Row", "Medium Intent Day", ["Posterior Cuff", "Low Trap", "Mid Trap", "Rear Delt"], ["Scap Control", "External Rotation", "Arm Path Support"], "Medium", ["Glove", "Band/DB"], "2 x 15"],
+  ["Tripod T Dribbles", "Medium Intent Day", ["Rear Delt", "Mid Trap", "Rotator Cuff"], ["Scap Stability", "Shoulder Control", "Coordination"], "Low-Medium", ["Ball"], "20 sec"],
+  ["Prone Scap Angels", "Post-Throw", ["Low Trap", "Mid Trap", "Rhomboids", "Rear Delt"], ["Scap Strength", "Posture Restoration", "Shoulder Control"], "Low", ["Bodyweight"], "2 x max reps"],
+  ["Posterior Wall Angels", "Recovery Day", ["Mid Trap", "Low Trap", "Posterior Shoulder", "Thoracic Spine"], ["Posture", "Mobility", "Scap Control"], "Low", ["Wall"], "2 x 10-20"],
+  ["Pivot Pick Low/Mid Trap Recruitment", "Medium Intent Day", ["Low Trap", "Mid Trap", "Posterior Cuff"], ["Arm Path Support", "Scap Recruitment", "Throwing Pattern"], "Medium", ["Ball"], "2 x 15"],
+  ["Split Stance T Isometrics", "Medium Intent Day", ["Mid Trap", "Rear Delt", "Rhomboids"], ["Isometric Strength", "Scap Stability", "Posture"], "Medium", ["Band/Cable"], "3 x 15 sec"],
+  ["Tubing Y Walkout Eccentrics", "Intense Throwing Day", ["Low Trap", "Posterior Cuff", "Scap Stabilizers"], ["Eccentric Control", "Decel Chain", "Scap Upward Rotation"], "Medium", ["Tubing/Band"], "2 x 10 eccentrics"],
+  ["Sidelying Serratus Punch w/ Stability Ball", "Medium Intent Day", ["Serratus Anterior", "Scap Stabilizers"], ["Protraction", "Scap Control", "Shoulder Blade Awareness"], "Low-Medium", ["Stability Ball"], "2 x 20"],
+  ["Sidelying Serratus Isolation Slides", "Medium Intent Day", ["Serratus Anterior"], ["Upward Rotation", "Scap Control", "Isolation"], "Low", ["Slider/Towel"], "2 x 15"],
+  ["Single Arm Serratus Slides", "Medium Intent Day", ["Serratus Anterior", "Low Trap"], ["Upward Rotation", "Single Arm Control", "Scap Stability"], "Low", ["Slider/Towel"], "2 x 15 each"],
+  ["Split Stance Serratus Scoops", "Medium Intent Day", ["Serratus Anterior", "Low Trap", "Core"], ["Scap Upward Rotation", "Throwing Pattern", "Posture"], "Low-Medium", ["Band/Cable"], "2 x 15 slow scoops"],
+  ["Back to Wall Serratus Scoops", "Medium Intent Day", ["Serratus Anterior", "Low Trap"], ["Scap Control", "Posture", "Upward Rotation"], "Low", ["Wall"], "2 x 15"],
+  ["Supine Stability Ball Shoulder Circles", "Medium Intent Day", ["Rotator Cuff", "Scap Stabilizers", "Serratus"], ["Shoulder Stability", "Control", "Coordination"], "Low-Medium", ["Stability Ball"], "2 x 15 each direction"],
+  ["Low Side Plank Flexion Ball Drops", "Intense Throwing Day", ["Posterior Cuff", "Serratus", "Core"], ["Deceleration", "Shoulder Stability", "Core Integration"], "Medium", ["Ball"], "3 x 30 drops"],
+  ["Low Side Plank Stability Arm Bar", "Intense Throwing Day", ["Rotator Cuff", "Serratus", "Core"], ["Shoulder Stability", "Arm Bar Control", "Core Integration"], "Medium", ["Weighted Ball/DB"], "3 x 12 rotations"],
+  ["Low Side Plank Shoulder Horizontal Abduction/Adduction", "Intense Throwing Day", ["Rear Delt", "Posterior Cuff", "Core"], ["Shoulder Stability", "Horizontal Control", "Decel Support"], "Medium", ["Weighted Ball"], "2 x 15"],
+  ["1st and 2nd Digit/Wrist Flexion", "Intense Throwing Day", ["Finger Flexors", "Wrist Flexors", "Forearm"], ["Grip Strength", "Elbow Support", "Forearm Capacity"], "Medium", ["Band/DB"], "2 x 40"],
+  ["Ulnar Deviation Isometrics", "Intense Throwing Day", ["Wrist Stabilizers", "Forearm"], ["Wrist Stability", "Elbow Support", "Isometric Strength"], "Medium", ["Band/DB"], "5 x 10 sec holds"],
+  ["Kettlebell Pronation/Supination", "Intense Throwing Day", ["Pronator Teres", "Supinator", "Forearm"], ["Forearm Strength", "Elbow Support", "Rotation Control"], "Medium", ["Kettlebell"], "2 x 12 each direction"],
+  ["1/2 Kneeling Forearm Dribbles", "Intense Throwing Day", ["Forearm", "Wrist Stabilizers", "Pronator/Supinator"], ["Forearm Elasticity", "Wrist Control", "Elbow Support"], "Medium", ["Ball"], "2 x 15 sec fast"],
+  ["Pec Minor Release w/ Active ER", "Recovery Day", ["Pec Minor", "Anterior Shoulder"], ["Soft Tissue", "External Rotation", "Shoulder Position"], "Low", ["Ball/Wall"], "2 min"],
+  ["Multi-Angle Pec Elongations", "Recovery Day", ["Pec Major", "Pec Minor", "Anterior Shoulder"], ["Mobility", "Lengthening", "Posture Restoration"], "Low", ["Wall"], "45 sec"],
+  ["Single Arm Pec Stretch", "Recovery Day", ["Pec Major", "Pec Minor", "Anterior Shoulder"], ["Mobility", "Posture Restoration", "Shoulder Position"], "Low", ["Wall/Doorway"], "1 min"],
+  ["Lat Foam Roll Pin and Stretch", "Recovery Day", ["Lat", "Teres Major"], ["Soft Tissue", "Mobility", "Overhead Range"], "Low", ["Foam Roller"], "2 min"],
+  ["Lat/Triceps Long Head Stretch at Wall", "Recovery Day", ["Lat", "Triceps Long Head", "Teres Major"], ["Mobility", "Overhead Range", "Recovery"], "Low", ["Wall"], "45 sec"],
+  ["Rotator Cuff Soft Tissue @ Wall", "Recovery Day", ["Posterior Cuff", "Infraspinatus", "Teres Minor"], ["Soft Tissue", "Recovery", "Shoulder Range"], "Low", ["Ball/Wall"], "1 min"],
+  ["Infraspinatus/Teres Minor Self Mobilization", "Recovery Day", ["Infraspinatus", "Teres Minor", "Posterior Cuff"], ["Soft Tissue", "External Rotation Range", "Recovery"], "Low", ["Ball"], "2 min"],
+  ["Biceps Tack and Pump", "Recovery Day", ["Biceps", "Anterior Elbow"], ["Soft Tissue", "Elbow Recovery", "Blood Flow"], "Low", ["Ball"], "2 min"],
+  ["Upper Trap Stretch", "Recovery Day", ["Upper Trap", "Neck"], ["Mobility", "Recovery", "Tension Reduction"], "Low", ["Bodyweight"], "30 sec each side"],
+  ["Levator Scap Elongation", "Recovery Day", ["Levator Scapulae", "Neck"], ["Mobility", "Recovery", "Scap Position"], "Low", ["Bodyweight"], "3 sec each direction"],
+  ["Foam Roll Levered 90/90 to Y's", "Recovery Day", ["Thoracic Spine", "Low Trap", "Posterior Shoulder"], ["Mobility", "Scap Control", "Overhead Range"], "Low", ["Foam Roller"], "2 x 12 slides"],
+  ["T-Spine Levered Extension over Foam Roll", "Recovery Day", ["Thoracic Spine"], ["Extension", "Mobility", "Recovery"], "Low", ["Foam Roller"], "1-2 min"],
+  ["Thoracic Spine Windmills", "Recovery Day", ["Thoracic Spine", "Obliques"], ["Rotation", "Mobility", "Separation Prep"], "Low", ["Bodyweight"], "15 each direction"],
+  ["Sidelying Pelvis/Shoulder Separations", "Recovery Day", ["Thoracic Spine", "Obliques", "Hips"], ["Separation", "Mobility", "Rotation"], "Low", ["Bodyweight"], "15 each direction"],
+  ["Arm Bar Banded External Rotations Abduction", "Post-Throw", ["Posterior Cuff", "Rotator Cuff", "Scap Stabilizers"], ["External Rotation", "Shoulder Stability", "Arm Bar Control"], "Low-Medium", ["Band"], "2 x 12"],
+  ["Tripod Rotations with Oscillations w/ Weighted Ball", "Intense Throwing Day", ["Rotator Cuff", "Scap Stabilizers", "Core"], ["Oscillation Control", "Shoulder Stability", "Decel Prep"], "Medium", ["Weighted Ball"], "2 x 12"],
+  ["Stability Ball Rotation Dribbles", "Medium Intent Day", ["Rotator Cuff", "Scap Stabilizers"], ["Shoulder Stability", "Coordination", "Rhythm"], "Low-Medium", ["Stability Ball", "Ball"], "20 sec each direction"],
 ];
+
+const armCare = armBase.map((b, i) => ({
+  id: `arm-${i + 1}`,
+  name: b[0],
+  block: b[1],
+  muscleTags: b[2],
+  functionTags: b[3],
+  intensity: b[4],
+  equipment: b[5],
+  prescription: b[6],
+  videoUrl: "",
+}));
 
 function drill(name, level, category, type, fixes, intent, environment, prescription, note) {
   return { id: `drill-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, name, level, category, type, fixes, intent, environment, prescription, note, video: "Video placeholder" };
@@ -330,6 +456,7 @@ export default function AceCoachAppPreview() {
     setAthletes((prev) => prev.map((a) => (a.id === activeAthlete.id ? { ...a, activeWeekId: savedWeek.id, plans: [savedWeek, ...(a.plans || [])] } : a)));
     setSaveStatus(`Saved ${savedWeek.weekName} to ${activeAthlete.name}.`);
     setActiveStep(1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const setActiveWeek = (weekId) => {
@@ -497,9 +624,23 @@ export default function AceCoachAppPreview() {
           <Assessment activeAthlete={activeAthlete} profile={profile} setProfile={setProfile} primaryIssues={primaryIssues} setPrimaryIssues={setPrimaryIssues} secondaryIssues={secondaryIssues} setSecondaryIssues={setSecondaryIssues} athleteType={athleteType} setAthleteType={setAthleteType} primarySoreness={primarySoreness} setPrimarySoreness={setPrimarySoreness} toggle={toggle} saveAssessmentToAthlete={saveAssessmentToAthlete} />
         )}
 
-        {appMode === "coach" && activeStep === 3 && <Database title="Recommended Drill Database" items={recommendedDrills} selected={selectedDrills} setSelected={setSelectedDrills} kind="drills" onDragStart={onDragStart} />}
+        {appMode === "coach" && activeStep === 3 && <>
+          <Database title="Recommended Drill Database" items={recommendedDrills} selected={selectedDrills} setSelected={setSelectedDrills} kind="drills" onDragStart={onDragStart} />
+          <div className="mt-5 flex justify-end">
+            <button onClick={() => setActiveStep(4)} className="bg-white text-black rounded-xl px-5 py-3 font-black">
+              Next → Arm Care
+            </button>
+          </div>
+        </>}
 
-        {appMode === "coach" && activeStep === 4 && <ArmCare items={armCare} recommendedItems={recommendedArmCare} selected={selectedArm} setSelected={setSelectedArm} onDragStart={onDragStart} />}
+        {appMode === "coach" && activeStep === 4 && <>
+          <ArmCare items={armCare} recommendedItems={recommendedArmCare} selected={selectedArm} setSelected={setSelectedArm} onDragStart={onDragStart} />
+          <div className="mt-5 flex justify-end">
+            <button onClick={() => setActiveStep(5)} className="bg-white text-black rounded-xl px-5 py-3 font-black">
+              Next → Weekly Builder
+            </button>
+          </div>
+        </>}
 
         {appMode === "coach" && activeStep === 5 && (
           <WeeklyBuilder activeAthlete={activeAthlete} weekName={weekName} setWeekName={setWeekName} phase={phase} setPhase={setPhase} plan={plan} setPlan={setPlan} selectedDrills={selectedDrills} selectedArm={selectedArm} recommendedDrills={recommendedDrills} recommendedArmCare={recommendedArmCare} onDragStart={onDragStart} onDrop={onDrop} removeFromDay={removeFromDay} saveWeekToAthlete={saveWeekToAthlete} autoBuildWeek={autoBuildWeek} clearCurrentPlan={clearCurrentPlan} />
@@ -595,6 +736,19 @@ function AthleteManager({ profile, setProfile, showAddAthlete, setShowAddAthlete
                     <div className="flex gap-2 flex-wrap">
                       <button onClick={() => setActiveWeek(week.id)} className="bg-red-700 rounded-xl px-3 py-2 text-sm font-black">Set Active</button>
                       <button onClick={() => setViewingWeek(viewingWeek?.id === week.id ? null : week)} className="bg-zinc-800 rounded-xl px-3 py-2 text-sm font-black">View</button>
+                      <button onClick={() => {
+                        if (!window.confirm(`Delete ${week.weekName}?`)) return;
+                        const updated = athletes.map((a) => {
+                          if (a.id !== activeAthlete.id) return a;
+                          return {
+                            ...a,
+                            plans: (a.plans || []).filter((p) => p.id !== week.id),
+                            activeWeekId: a.activeWeekId === week.id ? null : a.activeWeekId,
+                          };
+                        });
+                        localStorage.setItem("ace-athletes", JSON.stringify(updated));
+                        window.location.reload();
+                      }} className="bg-red-900 rounded-xl px-3 py-2 text-sm font-black">Delete</button>
                       <button onClick={() => editSavedWeek(week)} className="bg-white text-black rounded-xl px-3 py-2 text-sm font-black">Edit</button>
                     </div>
                   </div>
