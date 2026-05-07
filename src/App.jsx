@@ -843,32 +843,148 @@ function Assessment({ activeAthlete, profile, setProfile, primaryIssues, setPrim
 }
 
 function Database({ title, items, selected, setSelected, kind, onDragStart }) {
-  const toggleSelected = (item) => setSelected(selected.some((x) => x.id === item.id) ? selected.filter((x) => x.id !== item.id) : [...selected, item]);
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [typeFilter, setTypeFilter] = useState("All");
+
+  const categoryLabel = kind === "arm" ? "Block" : "Category";
+  const typeLabel = kind === "arm" ? "Intensity" : "Type";
+
+  const categories = useMemo(() => {
+    const values = items.map((item) => (kind === "arm" ? item.block : item.category)).filter(Boolean);
+    return ["All", ...Array.from(new Set(values))];
+  }, [items, kind]);
+
+  const types = useMemo(() => {
+    const values = items.map((item) => (kind === "arm" ? item.intensity : item.type)).filter(Boolean);
+    return ["All", ...Array.from(new Set(values))];
+  }, [items, kind]);
+
+  const filteredItems = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return items.filter((item) => {
+      const categoryValue = kind === "arm" ? item.block : item.category;
+      const typeValue = kind === "arm" ? item.intensity : item.type;
+      const searchText = [
+        item.name,
+        item.category,
+        item.type,
+        item.block,
+        item.intensity,
+        item.environment,
+        item.prescription,
+        item.note,
+        ...(item.fixes || []),
+        ...(item.muscleTags || []),
+        ...(item.functionTags || []),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      const matchesSearch = !query || searchText.includes(query);
+      const matchesCategory = categoryFilter === "All" || categoryValue === categoryFilter;
+      const matchesType = typeFilter === "All" || typeValue === typeFilter;
+
+      return matchesSearch && matchesCategory && matchesType;
+    });
+  }, [items, search, categoryFilter, typeFilter, kind]);
+
+  const toggleSelected = (item) =>
+    setSelected(
+      selected.some((x) => x.id === item.id)
+        ? selected.filter((x) => x.id !== item.id)
+        : [...selected, item]
+    );
 
   return (
     <section>
-      <div className="flex justify-between gap-4 flex-wrap mb-4">
-        <div>
-          <h2 className="text-2xl font-black">{title}</h2>
-          <p className="text-zinc-400">Select items or drag them into the weekly builder.</p>
-        </div>
-        <div className="text-sm text-zinc-500">Selected: {selected.length}</div>
-      </div>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map((item) => (
-          <div key={item.id} draggable onDragStart={(e) => onDragStart(e, item, kind)} className="rounded-3xl bg-zinc-950 border border-zinc-800 p-4 cursor-grab">
-            <div className="flex justify-between gap-2">
-              <div>
-                <h3 className="font-black">{item.name}</h3>
-                <p className="text-xs text-zinc-500">{item.category} · {item.type} · {item.environment}</p>
-              </div>
-              <button onClick={() => toggleSelected(item)} className={`rounded-xl px-3 py-2 text-xs font-black ${selected.some((x) => x.id === item.id) ? "bg-red-700" : "bg-zinc-800"}`}>{selected.some((x) => x.id === item.id) ? "Added" : "Add"}</button>
-            </div>
-            <p className="text-sm text-zinc-400 mt-3">{item.note}</p>
-            <div className="text-xs text-red-300 mt-3">{item.prescription}</div>
+      <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5 mb-5">
+        <div className="flex justify-between gap-4 flex-wrap mb-4">
+          <div>
+            <h2 className="text-2xl font-black">{title}</h2>
+            <p className="text-zinc-400">Search, filter, select, or drag items into the weekly builder.</p>
           </div>
-        ))}
+          <div className="text-sm text-zinc-400 bg-black border border-zinc-800 rounded-2xl px-4 py-3">
+            Showing <span className="font-black text-white">{filteredItems.length}</span> / {items.length} · Selected <span className="font-black text-red-400">{selected.length}</span>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-3">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={`Search ${kind === "arm" ? "arm care" : "drills"}...`}
+            className="bg-black border border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-red-600"
+          />
+
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="bg-black border border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-red-600"
+          >
+            {categories.map((value) => (
+              <option key={value} value={value}>{categoryLabel}: {value}</option>
+            ))}
+          </select>
+
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="bg-black border border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-red-600"
+          >
+            {types.map((value) => (
+              <option key={value} value={value}>{typeLabel}: {value}</option>
+            ))}
+          </select>
+        </div>
       </div>
+
+      {filteredItems.length ? (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredItems.map((item) => {
+            const isSelected = selected.some((x) => x.id === item.id);
+            return (
+              <div
+                key={item.id}
+                draggable
+                onDragStart={(e) => onDragStart(e, item, kind)}
+                className={`rounded-3xl bg-zinc-950 border p-4 cursor-grab transition ${isSelected ? "border-red-600 shadow-lg shadow-red-950/30" : "border-zinc-800 hover:border-zinc-600"}`}
+              >
+                <div className="flex justify-between gap-2">
+                  <div>
+                    <h3 className="font-black">{item.name}</h3>
+                    <p className="text-xs text-zinc-500">
+                      {kind === "arm"
+                        ? `${item.block} · ${item.intensity}`
+                        : `${item.category} · ${item.type} · ${item.environment}`}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => toggleSelected(item)}
+                    className={`rounded-xl px-3 py-2 text-xs font-black ${isSelected ? "bg-red-700" : "bg-zinc-800"}`}
+                  >
+                    {isSelected ? "Added" : "Add"}
+                  </button>
+                </div>
+
+                <p className="text-sm text-zinc-400 mt-3">
+                  {item.note || (item.functionTags || []).slice(0, 3).join(" · ") || "No note added yet."}
+                </p>
+
+                <div className="flex justify-between items-center gap-3 mt-4">
+                  <div className="text-xs text-red-300 font-black">{item.prescription}</div>
+                  <div className="text-xs text-zinc-600">No video yet</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-8 text-center text-zinc-500">
+          No results found. Clear the search or filters.
+        </div>
+      )}
     </section>
   );
 }
