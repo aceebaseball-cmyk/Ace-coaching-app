@@ -1068,7 +1068,7 @@ function WeeklyBuilder({ activeAthlete, weekName, setWeekName, phase, setPhase, 
           <button onClick={saveWeekToAthlete} className="bg-white text-black rounded-xl px-4 py-2 font-black">Save + Return Home</button>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="grid lg:grid-cols-4 gap-4 mb-5">
         <MiniLibrary title="Drills" items={selectedDrills.length ? selectedDrills : recommendedDrills.slice(0, 8)} kind="drills" onDragStart={onDragStart} />
