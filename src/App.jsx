@@ -1027,8 +1027,34 @@ function ArmCare({ items, recommendedItems, selected, setSelected, onDragStart }
   return <Database title="Arm Care Database" items={shown} selected={selected} setSelected={setSelected} kind="arm" onDragStart={onDragStart} />;
 }
 
-function WeeklyBuilder({ activeAthlete, weekName, setWeekName, phase, setPhase, plan, setPlan, selectedDrills, selectedArm, recommendedDrills, recommendedArmCare, onDragStart, onDrop, removeFromDay, saveWeekToAthlete, autoBuildWeek, clearCurrentPlan }) {
-  const updateDay = (day, field, value) => setPlan((prev) => ({ ...prev, [day]: { ...prev[day], [field]: value } }));
+function WeeklyBuilder({
+  activeAthlete,
+  weekName,
+  setWeekName,
+  phase,
+  setPhase,
+  plan,
+  setPlan,
+  selectedDrills,
+  selectedArm,
+  recommendedDrills,
+  recommendedArmCare,
+  onDragStart,
+  onDrop,
+  removeFromDay,
+  saveWeekToAthlete,
+  autoBuildWeek,
+  clearCurrentPlan,
+}) {
+  const updateDay = (day, field, value) => {
+    setPlan((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [field]: value,
+      },
+    }));
+  };
 
   const weekTotals = useMemo(() => {
     const allDays = Object.values(plan || {});
@@ -1036,43 +1062,92 @@ function WeeklyBuilder({ activeAthlete, weekName, setWeekName, phase, setPhase, 
     const armCount = allDays.reduce((total, day) => total + (day.arm?.length || 0), 0);
     const throwingDays = allDays.filter((day) => day.throwing && day.throwing !== "Off").length;
     const bullpenDays = allDays.filter((day) => day.throwing === "Bullpen" || day.type === "Bullpen Day").length;
-    return { drillCount, armCount, throwingDays, bullpenDays };
+
+    return {
+      drillCount,
+      armCount,
+      throwingDays,
+      bullpenDays,
+    };
   }, [plan]);
 
   return (
-    <section>
-      <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5 mb-5">
+    <section className="space-y-5">
+      <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
         <div className="flex justify-between gap-4 flex-wrap mb-4">
           <div>
             <h2 className="text-2xl font-black">Weekly Builder</h2>
-            <p className="text-zinc-400">{activeAthlete ? `Saving to ${activeAthlete.name}` : "Select an athlete before saving."}</p>
+            <p className="text-zinc-400">
+              {activeAthlete ? `Saving to ${activeAthlete.name}` : "Select an athlete before saving."}
+            </p>
           </div>
+
           <div className="grid grid-cols-4 gap-2 text-center text-xs">
-            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2"><div className="text-zinc-500">Throw</div><div className="font-black text-white">{weekTotals.throwingDays}</div></div>
-            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2"><div className="text-zinc-500">Pens</div><div className="font-black text-white">{weekTotals.bullpenDays}</div></div>
-            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2"><div className="text-zinc-500">Drills</div><div className="font-black text-white">{weekTotals.drillCount}</div></div>
-            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2"><div className="text-zinc-500">Arm</div><div className="font-black text-white">{weekTotals.armCount}</div></div>
+            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2">
+              <div className="text-zinc-500">Throw</div>
+              <div className="font-black text-white">{weekTotals.throwingDays}</div>
+            </div>
+            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2">
+              <div className="text-zinc-500">Pens</div>
+              <div className="font-black text-white">{weekTotals.bullpenDays}</div>
+            </div>
+            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2">
+              <div className="text-zinc-500">Drills</div>
+              <div className="font-black text-white">{weekTotals.drillCount}</div>
+            </div>
+            <div className="bg-black border border-zinc-800 rounded-xl px-3 py-2">
+              <div className="text-zinc-500">Arm</div>
+              <div className="font-black text-white">{weekTotals.armCount}</div>
+            </div>
           </div>
         </div>
 
         <div className="flex gap-2 flex-wrap">
-          <input value={weekName} onChange={(e) => setWeekName(e.target.value)} className="bg-black border border-zinc-800 rounded-xl px-4 py-2" />
-          <select value={phase} onChange={(e) => setPhase(e.target.value)} className="bg-black border border-zinc-800 rounded-xl px-4 py-2">
+          <input
+            value={weekName}
+            onChange={(e) => setWeekName(e.target.value)}
+            className="bg-black border border-zinc-800 rounded-xl px-4 py-2"
+            placeholder="Week name"
+          />
+
+          <select
+            value={phase}
+            onChange={(e) => setPhase(e.target.value)}
+            className="bg-black border border-zinc-800 rounded-xl px-4 py-2"
+          >
             <option>Build</option>
             <option>Strength</option>
             <option>Maintain</option>
             <option>Deload</option>
           </select>
-          <button onClick={autoBuildWeek} className="bg-red-700 text-white rounded-xl px-4 py-2 font-black">Auto Build</button>
-          <button onClick={clearCurrentPlan} className="bg-zinc-800 text-white rounded-xl px-4 py-2 font-black">Clear</button>
-          <button onClick={saveWeekToAthlete} className="bg-white text-black rounded-xl px-4 py-2 font-black">Save + Return Home</button>
-          </div>
-        </div>
-      </section>
 
-      <div className="grid lg:grid-cols-4 gap-4 mb-5">
-        <MiniLibrary title="Drills" items={selectedDrills.length ? selectedDrills : recommendedDrills.slice(0, 8)} kind="drills" onDragStart={onDragStart} />
-        <MiniLibrary title="Arm Care" items={selectedArm.length ? selectedArm : recommendedArmCare.slice(0, 8)} kind="arm" onDragStart={onDragStart} />
+          <button onClick={autoBuildWeek} className="bg-red-700 text-white rounded-xl px-4 py-2 font-black">
+            Auto Build
+          </button>
+          <button onClick={clearCurrentPlan} className="bg-zinc-800 text-white rounded-xl px-4 py-2 font-black">
+            Clear
+          </button>
+          <button onClick={saveWeekToAthlete} className="bg-white text-black rounded-xl px-4 py-2 font-black">
+            Save + Return Home
+          </button>
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-4 gap-4">
+        <MiniLibrary
+          title="Drills"
+          items={selectedDrills.length ? selectedDrills : recommendedDrills.slice(0, 8)}
+          kind="drills"
+          onDragStart={onDragStart}
+        />
+
+        <MiniLibrary
+          title="Arm Care"
+          items={selectedArm.length ? selectedArm : recommendedArmCare.slice(0, 8)}
+          kind="arm"
+          onDragStart={onDragStart}
+        />
+
         <div className="lg:col-span-2 rounded-3xl bg-zinc-950 border border-zinc-800 p-4 text-zinc-400 text-sm">
           Drag from the lists into a day, or press Auto Build. Manual editing stays simple so the app does not break during season.
         </div>
@@ -1081,27 +1156,71 @@ function WeeklyBuilder({ activeAthlete, weekName, setWeekName, phase, setPhase, 
       <div className="grid lg:grid-cols-7 gap-4">
         {days.map((day) => {
           const dayPlan = plan[day];
+
           return (
-            <div key={day} onDragOver={(e) => e.preventDefault()} onDrop={(e) => onDrop(e, day)} className="rounded-3xl bg-zinc-950 border border-zinc-800 p-4 min-h-96 hover:border-red-900/70 transition">
+            <div
+              key={day}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => onDrop(e, day)}
+              className="rounded-3xl bg-zinc-950 border border-zinc-800 p-4 min-h-96 hover:border-red-900/70 transition"
+            >
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div>
                   <h3 className="font-black text-red-400">{day}</h3>
-                  <p className="text-xs text-zinc-600">{dayPlan.drills.length} drills · {dayPlan.arm.length} arm care</p>
+                  <p className="text-xs text-zinc-600">
+                    {dayPlan.drills.length} drills · {dayPlan.arm.length} arm care
+                  </p>
                 </div>
-                <span className={`text-[10px] uppercase font-black rounded-full px-2 py-1 ${dayPlan.throwing === "Off" ? "bg-zinc-800 text-zinc-400" : dayPlan.throwing === "Bullpen" ? "bg-red-700 text-white" : "bg-white text-black"}`}>
+
+                <span
+                  className={`text-[10px] uppercase font-black rounded-full px-2 py-1 ${
+                    dayPlan.throwing === "Off"
+                      ? "bg-zinc-800 text-zinc-400"
+                      : dayPlan.throwing === "Bullpen"
+                        ? "bg-red-700 text-white"
+                        : "bg-white text-black"
+                  }`}
+                >
                   {dayPlan.throwing || "Off"}
                 </span>
               </div>
-              <select value={dayPlan.type} onChange={(e) => updateDay(day, "type", e.target.value)} className="w-full bg-black border border-zinc-800 rounded-xl px-2 py-2 mb-2 text-sm">
-                {dayTypes.map((type) => <option key={type}>{type}</option>)}
+
+              <select
+                value={dayPlan.type}
+                onChange={(e) => updateDay(day, "type", e.target.value)}
+                className="w-full bg-black border border-zinc-800 rounded-xl px-2 py-2 mb-2 text-sm"
+              >
+                {dayTypes.map((type) => (
+                  <option key={type}>{type}</option>
+                ))}
               </select>
-              <select value={dayPlan.throwing} onChange={(e) => updateDay(day, "throwing", e.target.value)} className="w-full bg-black border border-zinc-800 rounded-xl px-2 py-2 mb-2 text-sm">
-                {throwingTypes.map((type) => <option key={type}>{type}</option>)}
+
+              <select
+                value={dayPlan.throwing}
+                onChange={(e) => updateDay(day, "throwing", e.target.value)}
+                className="w-full bg-black border border-zinc-800 rounded-xl px-2 py-2 mb-2 text-sm"
+              >
+                {throwingTypes.map((type) => (
+                  <option key={type}>{type}</option>
+                ))}
               </select>
-              <textarea value={dayPlan.throwingDetails} onChange={(e) => updateDay(day, "throwingDetails", e.target.value)} className="w-full bg-black border border-zinc-800 rounded-xl p-2 mb-3 text-sm" />
+
+              <textarea
+                value={dayPlan.throwingDetails}
+                onChange={(e) => updateDay(day, "throwingDetails", e.target.value)}
+                className="w-full bg-black border border-zinc-800 rounded-xl p-2 mb-3 text-sm"
+                placeholder="Throwing details"
+              />
+
               <DayItems title="Drills" items={dayPlan.drills} day={day} kind="drills" removeFromDay={removeFromDay} />
               <DayItems title="Arm" items={dayPlan.arm} day={day} kind="arm" removeFromDay={removeFromDay} />
-              <textarea value={dayPlan.notes} onChange={(e) => updateDay(day, "notes", e.target.value)} placeholder="Notes" className="w-full bg-black border border-zinc-800 rounded-xl p-2 mt-3 text-sm" />
+
+              <textarea
+                value={dayPlan.notes}
+                onChange={(e) => updateDay(day, "notes", e.target.value)}
+                placeholder="Notes"
+                className="w-full bg-black border border-zinc-800 rounded-xl p-2 mt-3 text-sm"
+              />
             </div>
           );
         })}
