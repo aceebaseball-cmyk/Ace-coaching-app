@@ -230,6 +230,7 @@ export default function AceCoachAppPreview() {
   const [session, setSession] = useState(null);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [mockLoginRole, setMockLoginRole] = useState("coach");
   const [saveStatus, setSaveStatus] = useState("");
 
   const [athletes, setAthletes] = useState(() => readStorage("ace-athletes", []));
@@ -578,7 +579,15 @@ export default function AceCoachAppPreview() {
         </header>
 
         {!session && appMode === "coach" && (
-          <AuthBox loginEmail={loginEmail} setLoginEmail={setLoginEmail} loginPassword={loginPassword} setLoginPassword={setLoginPassword} loginCoach={loginCoach} signUpCoach={signUpCoach} />
+          <AuthBox
+            loginEmail={loginEmail}
+            setLoginEmail={setLoginEmail}
+            loginPassword={loginPassword}
+            setLoginPassword={setLoginPassword}
+            mockLoginRole={mockLoginRole}
+            setMockLoginRole={setMockLoginRole}
+            setSaveStatus={setSaveStatus}
+          />
         )}
 
         {appMode === "coach" && (
@@ -650,53 +659,324 @@ export default function AceCoachAppPreview() {
   );
 }
 
-function AuthBox({ loginEmail, setLoginEmail, loginPassword, setLoginPassword, loginCoach, signUpCoach }) {
+function AuthBox({
+  loginEmail,
+  setLoginEmail,
+  loginPassword,
+  setLoginPassword,
+  mockLoginRole,
+  setMockLoginRole,
+  setSaveStatus,
+}) {
+  const mockSignIn = () => {
+    setSaveStatus(`Mock ${mockLoginRole} sign in ready. Real auth will be connected later with payments.`);
+  };
+
   return (
-    <section className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5 mb-6">
-      <div className="flex justify-between gap-4 flex-wrap items-end">
+    <section className="rounded-[2rem] bg-gradient-to-br from-slate-950 via-zinc-950 to-black border border-zinc-800 p-5 md:p-8 mb-6 shadow-2xl shadow-red-950/20">
+      <div className="grid lg:grid-cols-2 gap-6 items-center">
         <div>
-          <h2 className="text-xl font-black">Coach Login</h2>
-          <p className="text-zinc-500 text-sm">Local app still works, but login saves athletes to Supabase when available.</p>
+          <div className="flex items-center gap-4 mb-5">
+            <div className="w-16 h-16 rounded-2xl bg-white p-2 flex items-center justify-center shadow-xl shadow-red-950/30">
+              <img src="/ace-logo.png" alt="ACE logo" className="w-full h-full object-contain" />
+            </div>
+            <div>
+              <div className="text-xs text-red-300 uppercase tracking-[0.25em] font-black">ACE Platform Access</div>
+              <h2 className="text-3xl md:text-4xl font-black">Train. Track. Develop.</h2>
+            </div>
+          </div>
+          <p className="text-zinc-400 max-w-xl">
+            Premium mock login screen for the coach console and athlete app. Authentication, payment, and private athlete access will connect later.
+          </p>
         </div>
-        <div className="flex gap-2 flex-wrap">
-          <input value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="Email" className="bg-black border border-zinc-800 rounded-xl px-3 py-2" />
-          <input value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} placeholder="Password" type="password" className="bg-black border border-zinc-800 rounded-xl px-3 py-2" />
-          <button onClick={loginCoach} className="bg-white text-black rounded-xl px-4 py-2 font-black">Login</button>
-          <button onClick={signUpCoach} className="bg-red-700 text-white rounded-xl px-4 py-2 font-black">Sign Up</button>
+
+        <div className="rounded-3xl bg-black/70 border border-zinc-800 p-5">
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {["coach", "athlete"].map((role) => (
+              <button
+                key={role}
+                onClick={() => setMockLoginRole(role)}
+                className={`rounded-xl py-3 font-black uppercase text-sm ${mockLoginRole === role ? "bg-red-700 text-white" : "bg-zinc-900 text-zinc-400 border border-zinc-800"}`}
+              >
+                {role}
+              </button>
+            ))}
+          </div>
+
+          <input
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)}
+            placeholder="Email"
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 mb-3 outline-none focus:border-red-600"
+          />
+          <input
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+            placeholder="Password"
+            type="password"
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 mb-3 outline-none focus:border-red-600"
+          />
+
+          <button onClick={mockSignIn} className="w-full bg-white text-black rounded-xl py-3 font-black mb-3">
+            Sign In as {mockLoginRole === "coach" ? "Coach" : "Athlete"}
+          </button>
+
+          <div className="text-center text-sm text-zinc-500">Forgot password? Coming with real auth.</div>
         </div>
       </div>
     </section>
   );
 }
 
-function getAthleteMetrics(athlete) {
-  const activeWeek = athlete?.activeWeekId
-    ? (athlete.plans || []).find((week) => week.id === athlete.activeWeekId)
-    : null;
+function NotificationCenter() {
+  const notifications = [
+    { id: 1, title: "Coach added notes", detail: "Review your latest bullpen feedback.", time: "Today" },
+    { id: 2, title: "Throwing plan updated", detail: "Friday bullpen focus has been adjusted.", time: "Yesterday" },
+    { id: 3, title: "Arm care incomplete", detail: "Post-throw recovery still needs to be logged.", time: "2 days ago" },
+    { id: 4, title: "Bullpen scheduled tomorrow", detail: "Prepare with your pre-throw activation block.", time: "This week" },
+    { id: 5, title: "New drill assigned", detail: "Separation Step Drill added to your plan.", time: "This week" },
+  ];
 
-  const activeWeekLogs = (athlete?.dailyCompletions || []).filter(
-    (log) => log.weekId === activeWeek?.id
+  return (
+    <section className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
+      <div className="flex justify-between gap-4 flex-wrap mb-4">
+        <div>
+          <h3 className="text-xl font-black">Notifications</h3>
+          <p className="text-zinc-500 text-sm">Mock alerts for coach updates, plan changes, and athlete tasks.</p>
+        </div>
+        <span className="h-fit text-xs uppercase font-black text-red-300 bg-red-950/30 border border-red-900 rounded-full px-3 py-2">
+          {notifications.length} Updates
+        </span>
+      </div>
+
+      <div className="space-y-2">
+        {notifications.map((item) => (
+          <div key={item.id} className="rounded-2xl bg-black border border-zinc-800 p-3 flex justify-between gap-3">
+            <div>
+              <div className="font-black text-sm">{item.title}</div>
+              <div className="text-xs text-zinc-500">{item.detail}</div>
+            </div>
+            <div className="text-xs text-zinc-600 whitespace-nowrap">{item.time}</div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
+}
 
-  const completedDays = new Set(activeWeekLogs.map((log) => log.day));
-  const completionPercent = activeWeek ? Math.round((completedDays.size / 7) * 100) : 0;
+function ProgressTracking({ athlete }) {
+  const mockVelo = [78, 79, 80, 80, 81, 82, 83];
+  const mockSoreness = [3, 2, 4, 2, 1, 3, 2];
+  const mockWorkload = [2, 3, 2, 4, 5, 2, 1];
+  const currentStreak = athlete?.dailyCompletions?.length || 0;
+  const weeklyCompletion = Math.min(100, Math.round(((athlete?.dailyCompletions?.length || 0) / 7) * 100));
 
-  let currentStreak = 0;
-  for (let i = days.length - 1; i >= 0; i -= 1) {
-    if (completedDays.has(days[i])) currentStreak += 1;
-    else if (currentStreak > 0) break;
-  }
+  return (
+    <section className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
+      <div className="flex justify-between gap-4 flex-wrap mb-5">
+        <div>
+          <h3 className="text-xl font-black">Progress Tracking</h3>
+          <p className="text-zinc-500 text-sm">Mock trends for velo, workload, soreness, completion, and streaks.</p>
+        </div>
+        <div className="text-xs uppercase font-black text-white bg-red-700 rounded-full px-3 py-2">{currentStreak} Day Streak</div>
+      </div>
 
-  const lastVelo = athlete?.veloLog?.length ? athlete.veloLog[0] : null;
-  const latestAssessment = athlete?.assessments?.length ? athlete.assessments[0] : null;
+      <div className="grid md:grid-cols-2 gap-4">
+        <MiniTrend title="Velocity Trend" values={mockVelo} suffix="mph" />
+        <MiniTrend title="Throwing Workload" values={mockWorkload} suffix="/5" />
+        <MiniTrend title="Soreness Trend" values={mockSoreness} suffix="/10" />
+        <div className="rounded-2xl bg-black border border-zinc-800 p-4">
+          <div className="flex justify-between text-sm mb-2">
+            <span className="font-black">Weekly Completion</span>
+            <span className="text-red-300 font-black">{weeklyCompletion}%</span>
+          </div>
+          <div className="h-3 rounded-full bg-zinc-900 overflow-hidden">
+            <div className="h-full bg-red-700 rounded-full" style={{ width: `${weeklyCompletion}%` }} />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-  return {
-    activeWeek,
-    completionPercent,
-    currentStreak,
-    lastVelo,
-    latestAssessment,
-  };
+function MiniTrend({ title, values, suffix }) {
+  const max = Math.max(...values);
+  return (
+    <div className="rounded-2xl bg-black border border-zinc-800 p-4">
+      <div className="font-black text-sm mb-3">{title}</div>
+      <div className="flex items-end gap-2 h-24">
+        {values.map((value, index) => (
+          <div key={`${title}-${index}`} className="flex-1 flex flex-col items-center gap-2">
+            <div className="w-full rounded-t-xl bg-red-700/80" style={{ height: `${Math.max(18, (value / max) * 80)}px` }} />
+            <div className="text-[10px] text-zinc-500">{value}{suffix}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CoachCommunication({ athlete, compact = false }) {
+  const messages = [
+    { id: 1, sender: "Coach", text: "Pinned cue: stay closed longer and finish through the catcher.", time: "Pinned" },
+    { id: 2, sender: athlete?.name || "Athlete", text: "Arm felt good today. Soreness was low after catch.", time: "Today" },
+    { id: 3, sender: "Coach", text: "Good. Keep the recovery work in after throwing and log velo if you touch anything high intent.", time: "Today" },
+  ];
+
+  return (
+    <section className={`rounded-3xl bg-zinc-950 border border-zinc-800 p-5 ${compact ? "" : ""}`}>
+      <div className="mb-4">
+        <h3 className="text-xl font-black">Coach Communication</h3>
+        <p className="text-zinc-500 text-sm">Mock comment thread for coach notes, athlete replies, timestamps, and pinned cues.</p>
+      </div>
+
+      <div className="space-y-3">
+        {messages.map((message) => (
+          <div key={message.id} className={`rounded-2xl border p-3 ${message.sender === "Coach" ? "bg-red-950/20 border-red-900" : "bg-black border-zinc-800"}`}>
+            <div className="flex justify-between text-xs mb-1">
+              <span className="font-black text-white">{message.sender}</span>
+              <span className="text-zinc-500">{message.time}</span>
+            </div>
+            <p className="text-sm text-zinc-300">{message.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AthleteDailyDashboard({
+  athlete,
+  activeWeek,
+  today,
+  todayPlan,
+  completedToday,
+  veloInput,
+  setVeloInput,
+  effort,
+  setEffort,
+  note,
+  setNote,
+  submitCompletion,
+}) {
+  const readiness = completedToday ? 92 : 84;
+  const soreness = completedToday?.effort === "Sore / Limited" ? 6 : 2;
+  const armCareItems = todayPlan?.arm || [];
+  const completedPercent = completedToday ? 100 : todayPlan ? 35 : 0;
+
+  return (
+    <section className="rounded-[2rem] bg-gradient-to-br from-zinc-950 via-black to-slate-950 border border-zinc-800 p-5 shadow-2xl shadow-red-950/20">
+      <div className="flex justify-between gap-4 flex-wrap mb-5">
+        <div>
+          <div className="text-xs uppercase tracking-[0.25em] text-red-300 font-black">Today’s ACE Plan</div>
+          <h2 className="text-3xl font-black mt-1">{today}</h2>
+          <p className="text-zinc-400">{activeWeek?.weekName || "No active week assigned yet."}</p>
+        </div>
+        <div className="rounded-2xl bg-white text-black px-4 py-3 h-fit font-black">
+          {completedToday ? "Complete" : "Ready to Work"}
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-3 mb-5">
+        <Stat label="Readiness" value={`${readiness}/100`} />
+        <Stat label="Soreness" value={`${soreness}/10`} />
+        <Stat label="Daily Progress" value={`${completedPercent}%`} />
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-4">
+        <div className="rounded-3xl bg-black border border-zinc-800 p-4">
+          <div className="text-xs text-zinc-500 uppercase mb-2">Throwing Plan</div>
+          <div className="text-2xl font-black text-red-300">{todayPlan?.throwing || "No Throwing Assigned"}</div>
+          <p className="text-sm text-zinc-400 mt-2">{todayPlan?.throwingDetails || "Coach has not assigned a throwing plan for today yet."}</p>
+        </div>
+
+        <div className="rounded-3xl bg-black border border-zinc-800 p-4">
+          <div className="text-xs text-zinc-500 uppercase mb-2">Arm Care Checklist</div>
+          {armCareItems.length ? armCareItems.slice(0, 4).map((item) => (
+            <div key={item.id} className="flex items-center justify-between border-b border-zinc-900 py-2 last:border-0">
+              <span className="text-sm text-zinc-300">{item.name}</span>
+              <span className="text-xs text-zinc-500">{item.prescription}</span>
+            </div>
+          )) : <p className="text-sm text-zinc-500">No arm care assigned today.</p>}
+        </div>
+
+        <div className="rounded-3xl bg-black border border-zinc-800 p-4">
+          <div className="text-xs text-zinc-500 uppercase mb-2">Velocity Entry</div>
+          <input value={veloInput} onChange={(e) => setVeloInput(e.target.value)} placeholder="Velo today" className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 mb-3" />
+          <select value={effort} onChange={(e) => setEffort(e.target.value)} className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2">
+            <option>Easy</option>
+            <option>Normal</option>
+            <option>Hard</option>
+            <option>Sore / Limited</option>
+          </select>
+        </div>
+
+        <div className="rounded-3xl bg-black border border-zinc-800 p-4">
+          <div className="text-xs text-zinc-500 uppercase mb-2">Coach Notes + Completion</div>
+          <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Reply or daily note..." className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 mb-3" />
+          <button onClick={submitCompletion} disabled={!activeWeek || !todayPlan} className="w-full bg-red-700 text-white rounded-xl py-3 font-black disabled:opacity-40">
+            Mark Today Complete
+          </button>
+        </div>
+      </div>
+
+      <div className="rounded-3xl bg-black border border-zinc-800 p-4 mt-4">
+        <div className="text-xs text-zinc-500 uppercase mb-3">Upcoming Throwing Schedule</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          {days.slice(0, 4).map((day) => (
+            <div key={day} className="rounded-2xl bg-zinc-950 border border-zinc-800 p-3">
+              <div className="text-xs text-zinc-500">{day}</div>
+              <div className="font-black text-sm">{activeWeek?.plan?.[day]?.throwing || "TBD"}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AthleteOnboardingFlow() {
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState({ name: "", age: "", position: "", role: "", velo: "", goals: "", history: "", availability: "" });
+  const update = (field, value) => setForm({ ...form, [field]: value });
+
+  return (
+    <section className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
+      <div className="flex justify-between gap-4 flex-wrap mb-5">
+        <div>
+          <h3 className="text-xl font-black">Athlete Onboarding Flow</h3>
+          <p className="text-zinc-500 text-sm">Mock multi-step setup for new athlete intake. Local state only.</p>
+        </div>
+        <span className="text-xs uppercase font-black text-red-300 bg-red-950/30 border border-red-900 rounded-full px-3 py-2">Step {step}/3</span>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-3 mb-4">
+        {step === 1 && (
+          <>
+            <input value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="Athlete name" className="bg-black border border-zinc-800 rounded-xl px-4 py-3" />
+            <input value={form.age} onChange={(e) => update("age", e.target.value)} placeholder="Age" className="bg-black border border-zinc-800 rounded-xl px-4 py-3" />
+            <input value={form.position} onChange={(e) => update("position", e.target.value)} placeholder="Position" className="bg-black border border-zinc-800 rounded-xl px-4 py-3" />
+            <input value={form.role} onChange={(e) => update("role", e.target.value)} placeholder="Throwing role" className="bg-black border border-zinc-800 rounded-xl px-4 py-3" />
+          </>
+        )}
+        {step === 2 && (
+          <>
+            <input value={form.velo} onChange={(e) => update("velo", e.target.value)} placeholder="Current velocity" className="bg-black border border-zinc-800 rounded-xl px-4 py-3" />
+            <input value={form.availability} onChange={(e) => update("availability", e.target.value)} placeholder="Weekly availability" className="bg-black border border-zinc-800 rounded-xl px-4 py-3" />
+            <textarea value={form.goals} onChange={(e) => update("goals", e.target.value)} placeholder="Goals" className="md:col-span-2 bg-black border border-zinc-800 rounded-xl p-3" />
+          </>
+        )}
+        {step === 3 && (
+          <textarea value={form.history} onChange={(e) => update("history", e.target.value)} placeholder="Soreness / injury history" className="md:col-span-2 bg-black border border-zinc-800 rounded-xl p-3 min-h-28" />
+        )}
+      </div>
+
+      <div className="flex justify-between gap-3">
+        <button onClick={() => setStep(Math.max(1, step - 1))} className="bg-zinc-800 text-white rounded-xl px-4 py-2 font-black">Back</button>
+        <button onClick={() => setStep(Math.min(3, step + 1))} className="bg-white text-black rounded-xl px-4 py-2 font-black">{step === 3 ? "Preview Complete" : "Next"}</button>
+      </div>
+    </section>
+  );
 }
 
 function AthleteManager({ profile, setProfile, showAddAthlete, setShowAddAthlete, saveAthlete, athletes, activeAthleteId, selectAthlete, duplicateLastWeek, setActiveWeek, viewingWeek, setViewingWeek, editSavedWeek, openAthletePreview, updateAthleteNotes, setActiveStep }) {
@@ -757,6 +1037,14 @@ function AthleteManager({ profile, setProfile, showAddAthlete, setShowAddAthlete
               <Stat label="Latest Assessment" value={metrics.latestAssessment?.date || "None"} />
             </div>
 
+            <AthleteTimeline athlete={activeAthlete} />
+
+            <VideoHub athlete={activeAthlete} />
+
+            <CoachCommunication athlete={activeAthlete} />
+
+            <AthleteOnboardingFlow />
+
             <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
               <h3 className="font-black text-red-400 mb-3">Saved Weeks</h3>
               {(activeAthlete.plans || []).length ? activeAthlete.plans.map((week) => (
@@ -798,6 +1086,190 @@ function AthleteManager({ profile, setProfile, showAddAthlete, setShowAddAthlete
         )}
       </div>
     </section>
+  );
+}
+
+function getMockAthleteVideos(athlete) {
+  return [
+    {
+      id: "video-1",
+      title: `${athlete?.name || "Athlete"} Bullpen Review`,
+      date: "Today",
+      type: "Bullpen",
+      mechanicFocus: "Direction, timing, front-side control",
+      tags: ["Bullpen", "Command", "Mechanics"],
+      coachNotes: "Good intent today. Keep the glove side stable and avoid spinning off early.",
+    },
+    {
+      id: "video-2",
+      title: "Flat Ground Drill Work",
+      date: "Yesterday",
+      type: "Flat Ground",
+      mechanicFocus: "Separation and rhythm",
+      tags: ["Flat Ground", "Drill", "Tempo"],
+      coachNotes: "Tempo improved after the first few reps. Keep the move smooth into landing.",
+    },
+    {
+      id: "video-3",
+      title: "Recovery Catch Check-In",
+      date: "2 Days Ago",
+      type: "Recovery",
+      mechanicFocus: "Arm path and recovery feel",
+      tags: ["Recovery", "Arm Care", "Light Catch"],
+      coachNotes: "No red flags. Keep recovery throws easy and focus on clean arm swing.",
+    },
+  ];
+}
+
+function VideoHub({ athlete }) {
+  const videos = getMockAthleteVideos(athlete);
+
+  return (
+    <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
+      <div className="flex items-center justify-between gap-4 flex-wrap mb-5">
+        <div>
+          <h3 className="text-xl font-black">Video Hub</h3>
+          <p className="text-zinc-500 text-sm">
+            Mock local video library for bullpen clips, game clips, drill work, flat grounds, and recovery check-ins.
+          </p>
+        </div>
+        <div className="text-xs uppercase tracking-wide text-red-300 bg-red-950/30 border border-red-900 rounded-full px-3 py-2 font-black">
+          Uploads Coming Later
+        </div>
+      </div>
+
+      <div className="rounded-3xl border border-dashed border-zinc-700 bg-black p-6 mb-5 text-center">
+        <div className="mx-auto mb-3 h-12 w-12 rounded-2xl bg-red-700/20 border border-red-800 flex items-center justify-center font-black text-red-300">
+          +
+        </div>
+        <div className="font-black text-white">Upload Athlete Video</div>
+        <p className="text-sm text-zinc-500 max-w-xl mx-auto mt-1">
+          Placeholder only for now. Later this will connect to Supabase Storage for private ACE video hosting.
+        </p>
+        <button disabled className="mt-4 bg-zinc-800 text-zinc-500 rounded-xl px-4 py-2 text-sm font-black cursor-not-allowed">
+          Upload Not Active Yet
+        </button>
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-4">
+        {videos.map((video) => (
+          <div key={video.id} className="rounded-3xl bg-black border border-zinc-800 p-4 hover:border-red-900/70 transition">
+            <div className="aspect-video rounded-2xl bg-zinc-950 border border-zinc-800 mb-4 flex items-center justify-center">
+              <div className="text-center">
+                <div className="mx-auto mb-2 h-10 w-10 rounded-full bg-red-700/20 border border-red-800 flex items-center justify-center text-red-300 font-black">
+                  ▶
+                </div>
+                <div className="text-xs text-zinc-500 uppercase">Video Placeholder</div>
+              </div>
+            </div>
+
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <div className="text-xs text-zinc-500 uppercase">{video.date}</div>
+                <h4 className="font-black text-lg leading-tight">{video.title}</h4>
+              </div>
+              <span className="text-[10px] uppercase font-black rounded-full px-2 py-1 bg-white text-black">
+                {video.type}
+              </span>
+            </div>
+
+            <div className="rounded-2xl bg-zinc-950 border border-zinc-800 p-3 mb-3">
+              <div className="text-xs text-zinc-500 uppercase mb-1">Mechanic Focus</div>
+              <p className="text-sm text-zinc-300">{video.mechanicFocus}</p>
+            </div>
+
+            <div className="flex flex-wrap gap-2 mb-3">
+              {video.tags.map((tag) => (
+                <span key={tag} className="text-xs bg-red-950/30 border border-red-900 text-red-200 rounded-full px-2 py-1">
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <div className="rounded-2xl bg-zinc-950 border border-zinc-800 p-3 mb-4">
+              <div className="text-xs text-zinc-500 uppercase mb-1">Coach Notes</div>
+              <p className="text-sm text-zinc-400 line-clamp-3">{video.coachNotes}</p>
+            </div>
+
+            <button className="w-full bg-red-700 text-white rounded-xl py-3 font-black">
+              Add Coach Breakdown
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AthleteTimeline({ athlete }) {
+  const timeline = getMockAthleteTimeline(athlete);
+
+  return (
+    <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5">
+      <div className="flex items-center justify-between gap-4 flex-wrap mb-5">
+        <div>
+          <h3 className="text-xl font-black">Athlete Timeline</h3>
+          <p className="text-zinc-500 text-sm">
+            Recent readiness, soreness, throwing status, velo, arm care, notes, and video review placeholders.
+          </p>
+        </div>
+        <div className="text-xs uppercase tracking-wide text-red-300 bg-red-950/30 border border-red-900 rounded-full px-3 py-2 font-black">
+          Mock Local Data
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-4">
+        {timeline.map((entry) => (
+          <div key={entry.id} className="rounded-3xl bg-black border border-zinc-800 p-4 hover:border-red-900/70 transition">
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <div className="text-xs text-zinc-500 uppercase">{entry.date}</div>
+                <div className="font-black text-lg">Daily Check-In</div>
+              </div>
+              <span className={`text-[10px] uppercase font-black rounded-full px-2 py-1 ${entry.throwingStatus === "Bullpen" ? "bg-red-700 text-white" : entry.throwingStatus === "Recovery Throw" ? "bg-zinc-800 text-zinc-300" : "bg-white text-black"}`}>
+                {entry.throwingStatus}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 mb-4 text-center">
+              <div className="rounded-2xl bg-zinc-950 border border-zinc-800 p-3">
+                <div className="text-[10px] text-zinc-500 uppercase">Ready</div>
+                <div className="text-xl font-black text-white">{entry.readiness}</div>
+              </div>
+              <div className="rounded-2xl bg-zinc-950 border border-zinc-800 p-3">
+                <div className="text-[10px] text-zinc-500 uppercase">Sore</div>
+                <div className="text-xl font-black text-white">{entry.soreness}/10</div>
+              </div>
+              <div className="rounded-2xl bg-zinc-950 border border-zinc-800 p-3">
+                <div className="text-[10px] text-zinc-500 uppercase">Velo</div>
+                <div className="text-xl font-black text-white">{entry.velocity === "--" ? "--" : `${entry.velocity}`}</div>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between rounded-2xl bg-zinc-950 border border-zinc-800 px-3 py-2">
+                <span className="text-sm text-zinc-400">Arm Care</span>
+                <span className={`text-xs font-black ${entry.armCareComplete ? "text-green-400" : "text-yellow-400"}`}>
+                  {entry.armCareComplete ? "Complete" : "Needs Log"}
+                </span>
+              </div>
+
+              <div className="rounded-2xl bg-zinc-950 border border-zinc-800 p-3">
+                <div className="text-xs text-zinc-500 uppercase mb-1">Coach Note</div>
+                <p className="text-sm text-zinc-300 line-clamp-3">{entry.coachNote}</p>
+              </div>
+
+              <div className="rounded-2xl bg-zinc-950 border border-dashed border-zinc-700 p-3">
+                <div className="text-xs text-zinc-500 uppercase mb-1">Video Review</div>
+                <p className="text-sm text-zinc-400">
+                  {entry.hasVideo ? "Video placeholder attached" : "No video attached yet"}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -879,9 +1351,69 @@ function Database({ title, items, selected, setSelected, kind, onDragStart }) {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState("All");
+  const [premiumFilter, setPremiumFilter] = useState("All");
+
+  const premiumDrillFilters = [
+    "All",
+    "Arm Path",
+    "Timing",
+    "Hip/Shoulder Separation",
+    "Lower Half",
+    "Recovery",
+    "Command",
+    "Velocity",
+  ];
 
   const categoryLabel = kind === "arm" ? "Block" : "Category";
   const typeLabel = kind === "arm" ? "Intensity" : "Type";
+
+  const getPremiumBucket = (item) => {
+    const text = [
+      item.name,
+      item.category,
+      item.type,
+      item.note,
+      ...(item.fixes || []),
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    if (text.includes("arm") || text.includes("arm path") || text.includes("late arm") || text.includes("restricted arm") || text.includes("muscling")) return "Arm Path";
+    if (text.includes("timing") || text.includes("tempo") || text.includes("rhythm") || text.includes("late")) return "Timing";
+    if (text.includes("separation") || text.includes("hip shoulder") || text.includes("closed") || text.includes("rotation")) return "Hip/Shoulder Separation";
+    if (text.includes("back leg") || text.includes("lower") || text.includes("stride") || text.includes("direction") || text.includes("lead leg")) return "Lower Half";
+    if (text.includes("recovery") || text.includes("low") || text.includes("mobility")) return "Recovery";
+    if (text.includes("command") || text.includes("target") || text.includes("miss") || text.includes("bullpen") || text.includes("catcher")) return "Command";
+    if (text.includes("velocity") || text.includes("intent") || text.includes("power") || text.includes("momentum") || text.includes("dynamic")) return "Velocity";
+    return "Lower Half";
+  };
+
+  const getPurpose = (item) => {
+    if (kind === "arm") return (item.functionTags || []).slice(0, 3).join(" · ") || "Build throwing durability and recovery capacity.";
+    return item.note || "Improve movement quality and transfer it into throwing.";
+  };
+
+  const getCoachingCue = (item) => {
+    if (kind === "arm") return "Move clean, own the range, and avoid rushing reps.";
+    const bucket = getPremiumBucket(item);
+    const cues = {
+      "Arm Path": "Let the arm work with the body instead of forcing it early.",
+      Timing: "Move smooth first, then let intent build through release.",
+      "Hip/Shoulder Separation": "Keep the shoulders closed while the lower half starts the move.",
+      "Lower Half": "Move through the ground without collapsing or drifting off line.",
+      Recovery: "Keep the stress low and restore clean movement quality.",
+      Command: "Finish through the target and let direction control the miss.",
+      Velocity: "Let momentum create speed instead of muscling the throw.",
+    };
+    return cues[bucket] || "Own the position before adding intent.";
+  };
+
+  const getDifficulty = (item) => {
+    if (item.level >= 5 || item.intent === "High" || item.intent === "Medium-High") return "Advanced";
+    if (item.level >= 3 || item.intent === "Medium") return "Intermediate";
+    return "Foundational";
+  };
 
   const categories = useMemo(() => {
     const values = items.map((item) => (kind === "arm" ? item.block : item.category)).filter(Boolean);
@@ -918,10 +1450,11 @@ function Database({ title, items, selected, setSelected, kind, onDragStart }) {
       const matchesSearch = !query || searchText.includes(query);
       const matchesCategory = categoryFilter === "All" || categoryValue === categoryFilter;
       const matchesType = typeFilter === "All" || typeValue === typeFilter;
+      const matchesPremium = kind === "arm" || premiumFilter === "All" || getPremiumBucket(item) === premiumFilter;
 
-      return matchesSearch && matchesCategory && matchesType;
+      return matchesSearch && matchesCategory && matchesType && matchesPremium;
     });
-  }, [items, search, categoryFilter, typeFilter, kind]);
+  }, [items, search, categoryFilter, typeFilter, premiumFilter, kind]);
 
   const toggleSelected = (item) =>
     setSelected(
@@ -935,13 +1468,38 @@ function Database({ title, items, selected, setSelected, kind, onDragStart }) {
       <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5 mb-5">
         <div className="flex justify-between gap-4 flex-wrap mb-4">
           <div>
+            <div className="text-xs text-red-300 uppercase tracking-wide font-black mb-1">
+              {kind === "arm" ? "ACE Recovery System" : "ACE Coaching Database"}
+            </div>
             <h2 className="text-2xl font-black">{title}</h2>
-            <p className="text-zinc-400">Search, filter, select, or drag items into the weekly builder.</p>
+            <p className="text-zinc-400">
+              {kind === "arm"
+                ? "Search, filter, select, or drag arm care into the weekly builder."
+                : "Premium drill library built around purpose, fixes, cues, and assignable athlete work."}
+            </p>
           </div>
           <div className="text-sm text-zinc-400 bg-black border border-zinc-800 rounded-2xl px-4 py-3">
             Showing <span className="font-black text-white">{filteredItems.length}</span> / {items.length} · Selected <span className="font-black text-red-400">{selected.length}</span>
           </div>
         </div>
+
+        {kind !== "arm" && (
+          <div className="flex gap-2 flex-wrap mb-4">
+            {premiumDrillFilters.map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setPremiumFilter(filter)}
+                className={`rounded-full border px-3 py-2 text-xs font-black transition ${
+                  premiumFilter === filter
+                    ? "bg-red-700 border-red-500 text-white"
+                    : "bg-black border-zinc-800 text-zinc-400 hover:border-zinc-600"
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="grid md:grid-cols-3 gap-3">
           <input
@@ -977,6 +1535,11 @@ function Database({ title, items, selected, setSelected, kind, onDragStart }) {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredItems.map((item) => {
             const isSelected = selected.some((x) => x.id === item.id);
+            const premiumBucket = kind === "arm" ? item.block : getPremiumBucket(item);
+            const purpose = getPurpose(item);
+            const coachingCue = getCoachingCue(item);
+            const difficulty = kind === "arm" ? item.intensity : getDifficulty(item);
+
             return (
               <div
                 key={item.id}
@@ -984,30 +1547,57 @@ function Database({ title, items, selected, setSelected, kind, onDragStart }) {
                 onDragStart={(e) => onDragStart(e, item, kind)}
                 className={`rounded-3xl bg-zinc-950 border p-4 cursor-grab transition ${isSelected ? "border-red-600 shadow-lg shadow-red-950/30" : "border-zinc-800 hover:border-zinc-600"}`}
               >
-                <div className="flex justify-between gap-2">
+                <div className="flex justify-between gap-2 mb-4">
                   <div>
-                    <h3 className="font-black">{item.name}</h3>
+                    <div className="text-[10px] uppercase tracking-wide text-red-300 font-black mb-1">{premiumBucket}</div>
+                    <h3 className="font-black text-lg leading-tight">{item.name}</h3>
                     <p className="text-xs text-zinc-500">
                       {kind === "arm"
                         ? `${item.block} · ${item.intensity}`
                         : `${item.category} · ${item.type} · ${item.environment}`}
                     </p>
                   </div>
-                  <button
-                    onClick={() => toggleSelected(item)}
-                    className={`rounded-xl px-3 py-2 text-xs font-black ${isSelected ? "bg-red-700" : "bg-zinc-800"}`}
-                  >
-                    {isSelected ? "Added" : "Add"}
-                  </button>
+                  <span className="h-fit rounded-full bg-black border border-zinc-800 px-2 py-1 text-[10px] uppercase font-black text-zinc-400">
+                    {difficulty}
+                  </span>
                 </div>
 
-                <p className="text-sm text-zinc-400 mt-3">
-                  {item.note || (item.functionTags || []).slice(0, 3).join(" · ") || "No note added yet."}
-                </p>
+                <div className="space-y-3">
+                  <div className="rounded-2xl bg-black border border-zinc-800 p-3">
+                    <div className="text-xs text-zinc-500 uppercase mb-1">Purpose</div>
+                    <p className="text-sm text-zinc-300">{purpose}</p>
+                  </div>
+
+                  {kind !== "arm" && (
+                    <div className="rounded-2xl bg-black border border-zinc-800 p-3">
+                      <div className="text-xs text-zinc-500 uppercase mb-2">Fixes</div>
+                      <div className="flex flex-wrap gap-2">
+                        {(item.fixes || []).slice(0, 4).map((fix) => (
+                          <span key={fix} className="text-xs bg-red-950/30 border border-red-900 text-red-200 rounded-full px-2 py-1">
+                            {fix}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="rounded-2xl bg-black border border-zinc-800 p-3">
+                    <div className="text-xs text-zinc-500 uppercase mb-1">Coaching Cue</div>
+                    <p className="text-sm text-zinc-400">{coachingCue}</p>
+                  </div>
+                </div>
 
                 <div className="flex justify-between items-center gap-3 mt-4">
-                  <div className="text-xs text-red-300 font-black">{item.prescription}</div>
-                  <div className="text-xs text-zinc-600">No video yet</div>
+                  <div>
+                    <div className="text-xs text-red-300 font-black">{item.prescription}</div>
+                    <div className="text-xs text-zinc-600">No video yet</div>
+                  </div>
+                  <button
+                    onClick={() => toggleSelected(item)}
+                    className={`rounded-xl px-4 py-2 text-xs font-black ${isSelected ? "bg-red-700 text-white" : "bg-white text-black"}`}
+                  >
+                    {isSelected ? "Assigned" : "Assign"}
+                  </button>
                 </div>
               </div>
             );
@@ -1310,6 +1900,27 @@ function AthleteMode({ athletes, lockedAthleteId, addDailyCompletion, addVeloEnt
       {athlete && (
         <div className="grid lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2 space-y-5">
+            <AthleteDailyDashboard
+              athlete={athlete}
+              activeWeek={activeWeek}
+              today={today}
+              todayPlan={todayPlan}
+              completedToday={completedToday}
+              veloInput={veloInput}
+              setVeloInput={setVeloInput}
+              effort={effort}
+              setEffort={setEffort}
+              note={note}
+              setNote={setNote}
+              submitCompletion={submitCompletion}
+            />
+
+            <NotificationCenter />
+
+            <ProgressTracking athlete={athlete} />
+
+            <CoachCommunication athlete={athlete} compact />
+
             <div className="rounded-3xl bg-red-950/20 border border-red-800 p-5">
               <div className="text-xs text-red-300 uppercase font-black">Current Week Only</div>
               <h3 className="text-3xl font-black">Today: {today}</h3>
