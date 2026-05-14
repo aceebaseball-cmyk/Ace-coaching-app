@@ -72,3 +72,30 @@ function getMockAthleteTimeline(athlete) {
     }
   ];
 }
+
+function aceFixLogoPaths() {
+  var images = document.querySelectorAll('img[src="/ace-logo.png"], img[src="ace-logo.png"]');
+  images.forEach(function (img) {
+    img.src = "/ace-logo.svg";
+  });
+
+  var icons = document.querySelectorAll('link[href="/ace-logo.png"], link[href="ace-logo.png"]');
+  icons.forEach(function (link) {
+    link.href = "/ace-logo.svg";
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", aceFixLogoPaths);
+} else {
+  aceFixLogoPaths();
+}
+
+var aceLogoObserver = new MutationObserver(function () {
+  aceFixLogoPaths();
+});
+
+aceLogoObserver.observe(document.documentElement, {
+  childList: true,
+  subtree: true
+});
