@@ -28,3 +28,47 @@ function getAthleteMetrics(athlete) {
     latestAssessment: latestAssessment
   };
 }
+
+function getMockAthleteTimeline(athlete) {
+  const veloLog = (athlete && athlete.veloLog) || [];
+  const dailyCompletions = (athlete && athlete.dailyCompletions) || [];
+  const coachNotes = (athlete && athlete.coachNotes) || "";
+  const currentVelo = athlete && athlete.currentVelo;
+  const athleteName = (athlete && athlete.name) || "Athlete";
+
+  return [
+    {
+      id: "timeline-1",
+      date: "Today",
+      readiness: 87,
+      soreness: 2,
+      throwingStatus: "Medium Intent",
+      velocity: (veloLog[0] && veloLog[0].velo) || currentVelo || "--",
+      armCareComplete: Boolean(dailyCompletions[0] && dailyCompletions[0].completed),
+      coachNote: coachNotes || athleteName + " should stay smooth early, then build intent after the arm feels hot.",
+      hasVideo: false
+    },
+    {
+      id: "timeline-2",
+      date: "Yesterday",
+      readiness: 74,
+      soreness: 4,
+      throwingStatus: "Recovery Throw",
+      velocity: (veloLog[1] && veloLog[1].velo) || "--",
+      armCareComplete: true,
+      coachNote: "Recovery quality looked solid. Keep the front side calm and avoid rushing tempo.",
+      hasVideo: true
+    },
+    {
+      id: "timeline-3",
+      date: "2 Days Ago",
+      readiness: 91,
+      soreness: 1,
+      throwingStatus: "Bullpen",
+      velocity: (veloLog[2] && veloLog[2].velo) || currentVelo || "--",
+      armCareComplete: true,
+      coachNote: "Best day of the week. Direction and timing were much cleaner into foot strike.",
+      hasVideo: false
+    }
+  ];
+}
