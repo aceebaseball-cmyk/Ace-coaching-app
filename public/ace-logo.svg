@@ -1,1 +1,53 @@
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M256 40C220 140 120 180 120 290C120 380 180 450 256 450C332 450 392 380 392 290C392 180 292 140 256 40Z" fill="#0A0A0A" stroke="#C0C0C0" stroke-width="18"/><path d="M256 120L190 340H232L246 292H312L326 340H368L302 120H256ZM256 248L279 178L302 248H256Z" fill="#F2F2F2"/></svg>
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="spadeGradient" x1="0" y1="0" x2="1200" y2="1200">
+      <stop offset="0%" stop-color="#2B2B2B"/>
+      <stop offset="50%" stop-color="#0A0A0A"/>
+      <stop offset="100%" stop-color="#1A1A1A"/>
+    </linearGradient>
+
+    <linearGradient id="silverGradient" x1="0" y1="0" x2="1200" y2="1200">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="50%" stop-color="#C8C8C8"/>
+      <stop offset="100%" stop-color="#8C8C8C"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M600 90
+           C760 260 910 420 910 620
+           C910 790 790 900 650 900
+           L650 1030
+           L820 1110
+           L380 1110
+           L550 1030
+           L550 900
+           C410 900 290 790 290 620
+           C290 420 440 260 600 90Z"
+        fill="url(#spadeGradient)"
+        stroke="url(#silverGradient)"
+        stroke-width="22"/>
+
+  <path d="M600 350
+           L790 760
+           L680 760
+           L640 665
+           L495 665
+           L455 760
+           L345 760
+           L535 350
+           Z"
+        fill="url(#silverGradient)"/>
+
+  <path d="M565 585
+           L610 475
+           L655 585
+           Z"
+        fill="#0A0A0A"/>
+
+  <path d="M470 650
+           L735 545
+           L770 610
+           L505 715
+           Z"
+        fill="url(#silverGradient)"/>
+</svg>
