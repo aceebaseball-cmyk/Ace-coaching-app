@@ -1,0 +1,18 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="spadeGradientPngAlias" x1="0" y1="0" x2="1200" y2="1200">
+      <stop offset="0%" stop-color="#2B2B2B"/>
+      <stop offset="50%" stop-color="#0A0A0A"/>
+      <stop offset="100%" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="silverGradientPngAlias" x1="0" y1="0" x2="1200" y2="1200">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="50%" stop-color="#C8C8C8"/>
+      <stop offset="100%" stop-color="#8C8C8C"/>
+    </linearGradient>
+  </defs>
+  <path d="M600 90 C760 260 910 420 910 620 C910 790 790 900 650 900 L650 1030 L820 1110 L380 1110 L550 1030 L550 900 C410 900 290 790 290 620 C290 420 440 260 600 90Z" fill="url(#spadeGradientPngAlias)" stroke="url(#silverGradientPngAlias)" stroke-width="22"/>
+  <path d="M600 350 L790 760 L680 760 L640 665 L495 665 L455 760 L345 760 L535 350 Z" fill="url(#silverGradientPngAlias)"/>
+  <path d="M565 585 L610 475 L655 585 Z" fill="#0A0A0A"/>
+  <path d="M470 650 L735 545 L770 610 L505 715 Z" fill="url(#silverGradientPngAlias)"/>
+</svg>
