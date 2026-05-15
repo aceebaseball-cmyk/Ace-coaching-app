@@ -86,7 +86,10 @@ function aceFixLogoPaths() {
   });
 }
 
-function acePolishProductionCopy() {
+function acePolishProductionCopyOnce() {
+  if (document.body && document.body.dataset.aceCopyPolished === "true") return;
+  if (document.body) document.body.dataset.aceCopyPolished = "true";
+
   var replacements = [
     [/\bmockup\b/gi, "platform"],
     [/\bprototype\b/gi, "platform"],
@@ -114,20 +117,23 @@ function acePolishProductionCopy() {
   var node;
   while ((node = walker.nextNode())) {
     var value = node.nodeValue;
+    var nextValue = value;
     replacements.forEach(function (pair) {
-      value = value.replace(pair[0], pair[1]);
+      nextValue = nextValue.replace(pair[0], pair[1]);
     });
-    node.nodeValue = value;
+    if (nextValue !== value) node.nodeValue = nextValue;
   }
 }
 
 function aceAddProfessionalIntro() {
+  if (document.querySelector(".ace-production-intro")) return;
+
   var headings = Array.from(document.querySelectorAll("h1, h2, h3, div"));
   var platformAccess = headings.find(function (el) {
     return el.textContent && el.textContent.trim() === "ACE Platform Access";
   });
 
-  if (!platformAccess || document.querySelector(".ace-production-intro")) return;
+  if (!platformAccess) return;
 
   var wrapper = platformAccess.parentElement && platformAccess.parentElement.parentElement;
   if (!wrapper) return;
@@ -145,24 +151,30 @@ function aceAddProfessionalIntro() {
   wrapper.appendChild(intro);
 }
 
-function aceApplyPolish() {
+function aceApplyPolishOnce() {
   aceFixLogoPaths();
-  acePolishProductionCopy();
+  acePolishProductionCopyOnce();
   aceAddProfessionalIntro();
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", aceApplyPolish);
+  document.addEventListener("DOMContentLoaded", aceApplyPolishOnce);
 } else {
-  aceApplyPolish();
+  aceApplyPolishOnce();
 }
 
+var aceLogoObserverQueued = false;
 var aceLogoObserver = new MutationObserver(function () {
-  aceApplyPolish();
+  if (aceLogoObserverQueued) return;
+  aceLogoObserverQueued = true;
+  window.setTimeout(function () {
+    aceLogoObserverQueued = false;
+    aceFixLogoPaths();
+    aceAddProfessionalIntro();
+  }, 250);
 });
 
 aceLogoObserver.observe(document.documentElement, {
   childList: true,
-  subtree: true,
-  characterData: true
+  subtree: true
 });
