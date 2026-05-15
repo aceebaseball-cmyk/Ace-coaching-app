@@ -86,10 +86,51 @@ function aceFixLogoPaths() {
   });
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", aceFixLogoPaths);
-} else {
+function aceCleanProductionWordsOnce() {
+  if (!document.body || document.body.dataset.aceProductionWordsCleaned === "true") return;
+  document.body.dataset.aceProductionWordsCleaned = "true";
+
+  var replacements = [
+    [/\bmockup\b/gi, "platform"],
+    [/\bprototype\b/gi, "platform"],
+    [/\bdemo\b/gi, "platform"],
+    [/\bsample\b/gi, "example"],
+    [/\btest app\b/gi, "ACE platform"],
+    [/Mock Local Data/g, "Athlete Activity"],
+    [/Mock alerts/g, "Platform alerts"],
+    [/Mock trends/g, "Performance trends"],
+    [/Mock comment thread/g, "Coach communication"],
+    [/Mock multi-step setup/g, "Athlete setup"],
+    [/Mock local video library/g, "Athlete video library"],
+    [/Video Placeholder/g, "Video Review"],
+    [/Upload Not Active Yet/g, "Upload Coming Soon"],
+    [/Uploads Coming Later/g, "Video Review"],
+    [/Forgot password\? Coming with real auth\./g, "Forgot password?"]
+  ];
+
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  var node;
+  while ((node = walker.nextNode())) {
+    var original = node.nodeValue;
+    var cleaned = original;
+    replacements.forEach(function (pair) {
+      cleaned = cleaned.replace(pair[0], pair[1]);
+    });
+    if (cleaned !== original) node.nodeValue = cleaned;
+  }
+}
+
+function aceRunSafeStartupPolish() {
   aceFixLogoPaths();
+  window.setTimeout(function () {
+    aceCleanProductionWordsOnce();
+  }, 900);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", aceRunSafeStartupPolish);
+} else {
+  aceRunSafeStartupPolish();
 }
 
 var aceLogoObserverQueued = false;
