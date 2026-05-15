@@ -86,6 +86,32 @@ function aceFixLogoPaths() {
   });
 }
 
+function aceShowNotice(message) {
+  var notice = document.getElementById("ace-coming-soon-notice");
+  if (!notice) {
+    notice = document.createElement("div");
+    notice.id = "ace-coming-soon-notice";
+    notice.style.position = "fixed";
+    notice.style.left = "50%";
+    notice.style.bottom = "24px";
+    notice.style.transform = "translateX(-50%)";
+    notice.style.zIndex = "9999";
+    notice.style.background = "#09090b";
+    notice.style.color = "white";
+    notice.style.border = "1px solid #3f3f46";
+    notice.style.borderRadius = "14px";
+    notice.style.padding = "12px 16px";
+    notice.style.fontFamily = "system-ui, sans-serif";
+    notice.style.boxShadow = "0 18px 45px rgba(0,0,0,.35)";
+    document.body.appendChild(notice);
+  }
+  notice.textContent = message;
+  window.clearTimeout(window.aceComingSoonNoticeTimer);
+  window.aceComingSoonNoticeTimer = window.setTimeout(function () {
+    if (notice && notice.parentNode) notice.parentNode.removeChild(notice);
+  }, 1800);
+}
+
 function aceMarkComingSoonButtons() {
   var buttons = Array.from(document.querySelectorAll("button"));
   buttons.forEach(function (button) {
@@ -106,29 +132,7 @@ function aceMarkComingSoonButtons() {
     button.addEventListener("click", function (event) {
       event.preventDefault();
       event.stopPropagation();
-      var notice = document.getElementById("ace-coming-soon-notice");
-      if (!notice) {
-        notice = document.createElement("div");
-        notice.id = "ace-coming-soon-notice";
-        notice.style.position = "fixed";
-        notice.style.left = "50%";
-        notice.style.bottom = "24px";
-        notice.style.transform = "translateX(-50%)";
-        notice.style.zIndex = "9999";
-        notice.style.background = "#09090b";
-        notice.style.color = "white";
-        notice.style.border = "1px solid #3f3f46";
-        notice.style.borderRadius = "14px";
-        notice.style.padding = "12px 16px";
-        notice.style.fontFamily = "system-ui, sans-serif";
-        notice.style.boxShadow = "0 18px 45px rgba(0,0,0,.35)";
-        document.body.appendChild(notice);
-      }
-      notice.textContent = "Coming soon";
-      window.clearTimeout(window.aceComingSoonNoticeTimer);
-      window.aceComingSoonNoticeTimer = window.setTimeout(function () {
-        if (notice && notice.parentNode) notice.parentNode.removeChild(notice);
-      }, 1800);
+      aceShowNotice("Coming soon");
     });
   });
 }
@@ -222,14 +226,110 @@ function aceInjectVideoLibraryFoundation() {
   renderVideos();
 
   var style = document.createElement("style");
-  style.textContent = '@media (max-width: 900px){#ace-video-grid{grid-template-columns:1fr!important}.ace-video-library-controls{grid-template-columns:1fr!important}}';
+  style.textContent = '@media (max-width: 900px){#ace-video-grid{grid-template-columns:1fr!important}.ace-video-library-controls{grid-template-columns:1fr!important}.ace-recommended-grid{grid-template-columns:1fr!important}}';
   document.head.appendChild(style);
+}
+
+function aceInjectRecommendedLibrarySections() {
+  var databaseHeadings = Array.from(document.querySelectorAll("h2")).filter(function (heading) {
+    var text = (heading.textContent || "").trim().toLowerCase();
+    return text.indexOf("drill") !== -1 || text.indexOf("arm care") !== -1;
+  });
+
+  databaseHeadings.forEach(function (heading) {
+    var title = (heading.textContent || "").trim();
+    var isArm = title.toLowerCase().indexOf("arm care") !== -1;
+    var id = isArm ? "ace-recommended-arm-care" : "ace-recommended-drills";
+    if (document.getElementById(id)) return;
+
+    var headerCard = heading.closest(".rounded-3xl");
+    if (!headerCard || !headerCard.parentNode) return;
+
+    var cards = Array.from(headerCard.parentNode.querySelectorAll("div[draggable='true']"));
+    if (!cards.length) return;
+
+    var preferred = isArm
+      ? ["Band ER at Side", "90/90 Band ER", "Scap Push-Up", "Open Book", "Prone YTW", "Face Pull"]
+      : ["Separation Step Drill", "Step Back Drill", "Rocker Step Drill", "Stride Direction Line Drill", "Target Box Drill", "Flow Throws"];
+
+    var recommendedCards = [];
+    preferred.forEach(function (name) {
+      var found = cards.find(function (card) {
+        var cardTitle = card.querySelector("h3");
+        return cardTitle && cardTitle.textContent.trim() === name;
+      });
+      if (found && recommendedCards.indexOf(found) === -1) recommendedCards.push(found);
+    });
+
+    cards.forEach(function (card) {
+      if (recommendedCards.length < 3 && recommendedCards.indexOf(card) === -1) recommendedCards.push(card);
+    });
+
+    if (!recommendedCards.length) return;
+
+    var section = document.createElement("div");
+    section.id = id;
+    section.style.border = "1px solid rgba(127,29,29,.55)";
+    section.style.borderRadius = "24px";
+    section.style.background = "linear-gradient(135deg, rgba(127,29,29,.20), rgba(9,9,11,.95))";
+    section.style.padding = "16px";
+    section.style.margin = "0 0 16px";
+
+    section.innerHTML =
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;">' +
+        '<div>' +
+          '<h3 style="margin:0;color:white;font-size:18px;font-weight:900;letter-spacing:-.025em;">Recommended for this athlete</h3>' +
+          '<p style="margin:4px 0 0;color:#a1a1aa;font-size:13px;line-height:1.5;">Suggested starting points based on common pitcher development needs. The full library stays available underneath.</p>' +
+        '</div>' +
+        '<span style="font-size:10px;text-transform:uppercase;font-weight:900;color:#fecaca;background:rgba(127,29,29,.35);border:1px solid rgba(248,113,113,.45);border-radius:999px;padding:7px 9px;">Recommended</span>' +
+      '</div>' +
+      '<div class="ace-recommended-grid" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;"></div>';
+
+    var grid = section.querySelector(".ace-recommended-grid");
+    recommendedCards.slice(0, 3).forEach(function (sourceCard) {
+      var sourceTitle = sourceCard.querySelector("h3");
+      var sourceMeta = sourceCard.querySelector("p");
+      var sourcePurpose = sourceCard.querySelector(".rounded-2xl p");
+      var sourceButton = Array.from(sourceCard.querySelectorAll("button")).find(function (button) {
+        var label = (button.textContent || "").trim().toLowerCase();
+        return label === "assign" || label === "assigned";
+      });
+
+      var item = document.createElement("article");
+      item.style.border = "1px solid rgba(148,163,184,.16)";
+      item.style.borderRadius = "18px";
+      item.style.background = "rgba(0,0,0,.72)";
+      item.style.padding = "12px";
+      item.innerHTML =
+        '<div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
+          '<div style="min-width:0;">' +
+            '<div style="font-size:10px;text-transform:uppercase;color:#fca5a5;font-weight:900;margin-bottom:3px;">Recommended</div>' +
+            '<h4 style="margin:0;color:white;font-size:15px;font-weight:900;line-height:1.15;">' + (sourceTitle ? sourceTitle.textContent : "Recommended Item") + '</h4>' +
+          '</div>' +
+        '</div>' +
+        '<p style="margin:0 0 8px;color:#71717a;font-size:12px;line-height:1.4;">' + (sourceMeta ? sourceMeta.textContent : "Good fit for this athlete.") + '</p>' +
+        '<p style="margin:0 0 10px;color:#a1a1aa;font-size:12px;line-height:1.45;">' + (sourcePurpose ? sourcePurpose.textContent : "Start here, then browse the full library below.") + '</p>' +
+        '<button type="button" style="width:100%;border:0;border-radius:12px;background:#fff;color:#000;padding:10px 12px;font-weight:900;font-size:12px;">Assign Recommended</button>';
+
+      item.querySelector("button").addEventListener("click", function () {
+        if (sourceButton) {
+          sourceButton.click();
+          aceShowNotice("Added from recommendations");
+        }
+      });
+
+      grid.appendChild(item);
+    });
+
+    headerCard.parentNode.insertBefore(section, headerCard.nextSibling);
+  });
 }
 
 function aceStartupButtonSafety() {
   aceFixLogoPaths();
   aceMarkComingSoonButtons();
   aceInjectVideoLibraryFoundation();
+  aceInjectRecommendedLibrarySections();
 }
 
 if (document.readyState === "loading") {
@@ -247,6 +347,7 @@ var aceButtonObserver = new MutationObserver(function () {
     aceFixLogoPaths();
     aceMarkComingSoonButtons();
     aceInjectVideoLibraryFoundation();
+    aceInjectRecommendedLibrarySections();
   }, 600);
 });
 
