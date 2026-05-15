@@ -16,13 +16,21 @@
         --ace-navy: #020617;
         --ace-black: #050505;
         --ace-card: #09090b;
+        --ace-card-soft: rgba(9, 9, 11, 0.88);
         --ace-border: rgba(148, 163, 184, 0.16);
+        --ace-border-strong: rgba(248, 250, 252, 0.18);
         --ace-red: #b91c1c;
+        --ace-red-soft: rgba(185, 28, 28, 0.18);
         --ace-silver: #d4d4d8;
+      }
+
+      * {
+        box-sizing: border-box;
       }
 
       html {
         background: var(--ace-navy);
+        scroll-behavior: smooth;
       }
 
       body {
@@ -42,6 +50,24 @@
         min-height: 100vh;
       }
 
+      main,
+      section,
+      header,
+      nav {
+        min-width: 0;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        letter-spacing: -0.035em;
+      }
+
+      p {
+        line-height: 1.65;
+      }
+
       button,
       input,
       select,
@@ -49,13 +75,41 @@
         font: inherit;
       }
 
+      input,
+      select,
+      textarea {
+        min-height: 44px;
+        transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: rgba(239, 68, 68, 0.75) !important;
+        box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.18);
+      }
+
       button,
       a {
-        transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease, opacity 160ms ease;
+        transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease, opacity 160ms ease, box-shadow 160ms ease;
       }
 
       button:hover:not(:disabled) {
         transform: translateY(-1px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+      }
+
+      button:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+      }
+
+      img {
+        max-width: 100%;
       }
 
       .ace-brand-card {
@@ -68,10 +122,11 @@
         width: 3.75rem;
         height: 3.75rem;
         border-radius: 1rem;
-        background: white;
-        padding: 0.45rem;
+        background: rgba(2, 6, 23, 0.72);
+        border: 1px solid rgba(212, 212, 216, 0.18);
+        padding: 0.35rem;
         object-fit: contain;
-        box-shadow: 0 18px 36px rgba(127, 29, 29, 0.26);
+        box-shadow: 0 18px 36px rgba(127, 29, 29, 0.22);
       }
 
       .ace-splash {
@@ -81,6 +136,86 @@
         background:
           radial-gradient(circle at center, rgba(185, 28, 28, 0.14), transparent 26rem),
           linear-gradient(135deg, #020617, #050505);
+      }
+
+      [class*="rounded-3xl"],
+      [class*="rounded-[2rem]"] {
+        border-color: var(--ace-border);
+      }
+
+      [class*="bg-zinc-950"] {
+        background-color: rgba(9, 9, 11, 0.92);
+      }
+
+      [class*="border-zinc-800"] {
+        border-color: var(--ace-border);
+      }
+
+      [class*="shadow-xl"],
+      [class*="shadow-2xl"] {
+        box-shadow: 0 20px 55px rgba(0, 0, 0, 0.28);
+      }
+
+      @media (max-width: 768px) {
+        body {
+          background:
+            radial-gradient(circle at top, rgba(185, 28, 28, 0.13), transparent 24rem),
+            linear-gradient(160deg, #020617 0%, #050505 52%, #09090b 100%);
+        }
+
+        h1 {
+          font-size: clamp(2rem, 11vw, 3rem) !important;
+          line-height: 0.95 !important;
+        }
+
+        h2 {
+          font-size: clamp(1.35rem, 6vw, 1.8rem) !important;
+        }
+
+        .ace-brand-card {
+          margin: 1rem;
+          padding: 1.25rem !important;
+        }
+
+        .ace-logo-mark {
+          width: 3.25rem;
+          height: 3.25rem;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+          width: 100%;
+        }
+
+        nav button,
+        .grid button {
+          width: auto;
+        }
+
+        [class*="p-8"] {
+          padding: 1.25rem !important;
+        }
+
+        [class*="p-6"] {
+          padding: 1rem !important;
+        }
+
+        [class*="gap-6"] {
+          gap: 1rem !important;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     </style>
   </head>
