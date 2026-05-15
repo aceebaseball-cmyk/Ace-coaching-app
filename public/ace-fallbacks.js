@@ -86,81 +86,10 @@ function aceFixLogoPaths() {
   });
 }
 
-function acePolishProductionCopyOnce() {
-  if (document.body && document.body.dataset.aceCopyPolished === "true") return;
-  if (document.body) document.body.dataset.aceCopyPolished = "true";
-
-  var replacements = [
-    [/\bmockup\b/gi, "platform"],
-    [/\bprototype\b/gi, "platform"],
-    [/\bdemo\b/gi, "platform"],
-    [/\bsample\b/gi, "example"],
-    [/\btest app\b/gi, "ACE platform"],
-    [/Mock Local Data/gi, "Athlete Activity"],
-    [/Mock alerts/gi, "Platform alerts"],
-    [/Mock trends/gi, "Performance trends"],
-    [/Mock comment thread/gi, "Coach communication"],
-    [/Mock multi-step setup/gi, "Athlete setup"],
-    [/Mock local video library/gi, "Athlete video library"],
-    [/Placeholder only for now\. Later this will connect to Supabase Storage for private ACE video hosting\./gi, "Video storage is prepared for private ACE athlete review."],
-    [/Upload Not Active Yet/gi, "Upload Coming Soon"],
-    [/Video Placeholder/gi, "Video Review"],
-    [/No video attached yet/gi, "No video attached"],
-    [/Uploads Coming Later/gi, "Video Review"],
-    [/Authentication, payment, and private athlete access will connect later\./gi, "Secure athlete access, plan delivery, and performance tracking in one platform."],
-    [/Forgot password\? Coming with real auth\./gi, "Forgot password?"],
-    [/Mock coach sign in ready\. Real auth will be connected later with payments\./gi, "Coach access ready."],
-    [/Mock athlete sign in ready\. Real auth will be connected later with payments\./gi, "Athlete access ready."]
-  ];
-
-  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-  var node;
-  while ((node = walker.nextNode())) {
-    var value = node.nodeValue;
-    var nextValue = value;
-    replacements.forEach(function (pair) {
-      nextValue = nextValue.replace(pair[0], pair[1]);
-    });
-    if (nextValue !== value) node.nodeValue = nextValue;
-  }
-}
-
-function aceAddProfessionalIntro() {
-  if (document.querySelector(".ace-production-intro")) return;
-
-  var headings = Array.from(document.querySelectorAll("h1, h2, h3, div"));
-  var platformAccess = headings.find(function (el) {
-    return el.textContent && el.textContent.trim() === "ACE Platform Access";
-  });
-
-  if (!platformAccess) return;
-
-  var wrapper = platformAccess.parentElement && platformAccess.parentElement.parentElement;
-  if (!wrapper) return;
-
-  var intro = document.createElement("p");
-  intro.className = "ace-production-intro";
-  intro.textContent = "ACE Baseball is a complete pitcher development platform focused on intelligent throwing development, arm care, performance tracking, and athlete growth.";
-  intro.style.marginTop = "16px";
-  intro.style.maxWidth = "640px";
-  intro.style.color = "#d4d4d8";
-  intro.style.fontSize = "15px";
-  intro.style.lineHeight = "1.65";
-  intro.style.letterSpacing = "0.01em";
-
-  wrapper.appendChild(intro);
-}
-
-function aceApplyPolishOnce() {
-  aceFixLogoPaths();
-  acePolishProductionCopyOnce();
-  aceAddProfessionalIntro();
-}
-
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", aceApplyPolishOnce);
+  document.addEventListener("DOMContentLoaded", aceFixLogoPaths);
 } else {
-  aceApplyPolishOnce();
+  aceFixLogoPaths();
 }
 
 var aceLogoObserverQueued = false;
@@ -170,8 +99,7 @@ var aceLogoObserver = new MutationObserver(function () {
   window.setTimeout(function () {
     aceLogoObserverQueued = false;
     aceFixLogoPaths();
-    aceAddProfessionalIntro();
-  }, 250);
+  }, 500);
 });
 
 aceLogoObserver.observe(document.documentElement, {
