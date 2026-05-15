@@ -133,9 +133,103 @@ function aceMarkComingSoonButtons() {
   });
 }
 
+function aceInjectVideoLibraryFoundation() {
+  if (document.getElementById("ace-video-library-foundation")) return;
+
+  var headings = Array.from(document.querySelectorAll("h3"));
+  var videoHubHeading = headings.find(function (heading) {
+    return heading.textContent && heading.textContent.trim() === "Video Hub";
+  });
+
+  if (!videoHubHeading) return;
+
+  var videoHubCard = videoHubHeading.closest(".rounded-3xl");
+  if (!videoHubCard || !videoHubCard.parentNode) return;
+
+  var categories = ["All", "Coach Videos", "Athlete Drill Videos", "Bullpens", "Game Clips", "Arm Care", "Mechanics Breakdowns"];
+  var videos = [
+    { title: "Weekly Coach Overview", category: "Coach Videos", tags: ["Planning", "Development"], focus: "Weekly priorities and athlete focus points", date: "This Week" },
+    { title: "Separation Step Drill", category: "Athlete Drill Videos", tags: ["Drill", "Timing"], focus: "Hip and shoulder separation timing", date: "Library" },
+    { title: "Bullpen Command Review", category: "Bullpens", tags: ["Bullpen", "Command"], focus: "Strike-zone execution and direction", date: "Recent" },
+    { title: "Game Clip Breakdown", category: "Game Clips", tags: ["Game", "Execution"], focus: "Pitch sequencing and competitive rhythm", date: "Recent" },
+    { title: "Post-Throw Recovery Block", category: "Arm Care", tags: ["Recovery", "Arm Care"], focus: "Post-throw recovery and tissue quality", date: "Library" },
+    { title: "Lead Leg + Direction Breakdown", category: "Mechanics Breakdowns", tags: ["Mechanics", "Lower Half"], focus: "Lead leg block and stride direction", date: "Library" }
+  ];
+
+  var section = document.createElement("section");
+  section.id = "ace-video-library-foundation";
+  section.style.marginTop = "16px";
+  section.style.border = "1px solid rgba(148, 163, 184, 0.16)";
+  section.style.borderRadius = "24px";
+  section.style.background = "rgba(9, 9, 11, 0.92)";
+  section.style.padding = "20px";
+
+  section.innerHTML =
+    '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px;">' +
+      '<div>' +
+        '<h3 style="font-size:20px;font-weight:900;margin:0;color:white;letter-spacing:-.03em;">Video Library</h3>' +
+        '<p style="margin:6px 0 0;color:#71717a;font-size:14px;line-height:1.5;">Organized video foundation for coach content, athlete drills, bullpens, game clips, arm care, and mechanics breakdowns.</p>' +
+      '</div>' +
+      '<span style="font-size:11px;text-transform:uppercase;font-weight:900;color:#fca5a5;background:rgba(127,29,29,.28);border:1px solid rgba(127,29,29,.65);border-radius:999px;padding:8px 10px;">Local Library</span>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:10px;margin-bottom:14px;" class="ace-video-library-controls">' +
+      '<input id="ace-video-search" placeholder="Search videos..." style="background:#000;border:1px solid rgba(148,163,184,.16);border-radius:12px;color:white;padding:12px;min-height:44px;width:100%;" />' +
+      '<select id="ace-video-filter" style="background:#000;border:1px solid rgba(148,163,184,.16);border-radius:12px;color:white;padding:12px;min-height:44px;width:100%;"></select>' +
+    '</div>' +
+    '<div id="ace-video-grid" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;"></div>';
+
+  videoHubCard.parentNode.insertBefore(section, videoHubCard.nextSibling);
+
+  var select = section.querySelector("#ace-video-filter");
+  categories.forEach(function (category) {
+    var option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    select.appendChild(option);
+  });
+
+  function renderVideos() {
+    var query = (section.querySelector("#ace-video-search").value || "").toLowerCase();
+    var filter = select.value;
+    var grid = section.querySelector("#ace-video-grid");
+    var filtered = videos.filter(function (video) {
+      var text = [video.title, video.category, video.focus].concat(video.tags).join(" ").toLowerCase();
+      return (filter === "All" || video.category === filter) && (!query || text.indexOf(query) !== -1);
+    });
+
+    grid.innerHTML = filtered.map(function (video) {
+      return '<article style="border:1px solid rgba(148,163,184,.16);border-radius:18px;background:#000;padding:12px;min-width:0;">' +
+        '<div style="aspect-ratio:16/9;border-radius:14px;background:linear-gradient(135deg,#09090b,#18181b);border:1px solid rgba(148,163,184,.14);display:grid;place-items:center;margin-bottom:12px;color:#fca5a5;font-weight:900;">▶</div>' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
+          '<div style="min-width:0;">' +
+            '<div style="font-size:11px;text-transform:uppercase;color:#71717a;font-weight:800;">' + video.date + '</div>' +
+            '<h4 style="margin:2px 0 0;font-size:15px;line-height:1.15;color:white;font-weight:900;">' + video.title + '</h4>' +
+          '</div>' +
+          '<span style="font-size:10px;text-transform:uppercase;font-weight:900;background:white;color:black;border-radius:999px;padding:5px 7px;white-space:nowrap;">' + video.category + '</span>' +
+        '</div>' +
+        '<p style="margin:0 0 10px;color:#a1a1aa;font-size:13px;line-height:1.45;">' + video.focus + '</p>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:6px;">' + video.tags.map(function (tag) { return '<span style="font-size:11px;color:#fecaca;background:rgba(127,29,29,.22);border:1px solid rgba(127,29,29,.55);border-radius:999px;padding:4px 7px;">' + tag + '</span>'; }).join("") + '</div>' +
+      '</article>';
+    }).join("");
+
+    if (!filtered.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;border:1px solid rgba(148,163,184,.16);border-radius:18px;background:#000;padding:18px;color:#71717a;text-align:center;">No videos match this search.</div>';
+    }
+  }
+
+  section.querySelector("#ace-video-search").addEventListener("input", renderVideos);
+  select.addEventListener("change", renderVideos);
+  renderVideos();
+
+  var style = document.createElement("style");
+  style.textContent = '@media (max-width: 900px){#ace-video-grid{grid-template-columns:1fr!important}.ace-video-library-controls{grid-template-columns:1fr!important}}';
+  document.head.appendChild(style);
+}
+
 function aceStartupButtonSafety() {
   aceFixLogoPaths();
   aceMarkComingSoonButtons();
+  aceInjectVideoLibraryFoundation();
 }
 
 if (document.readyState === "loading") {
@@ -152,6 +246,7 @@ var aceButtonObserver = new MutationObserver(function () {
     aceButtonObserverQueued = false;
     aceFixLogoPaths();
     aceMarkComingSoonButtons();
+    aceInjectVideoLibraryFoundation();
   }, 600);
 });
 
