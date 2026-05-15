@@ -86,64 +86,76 @@ function aceFixLogoPaths() {
   });
 }
 
-function aceCleanProductionWordsOnce() {
-  if (!document.body || document.body.dataset.aceProductionWordsCleaned === "true") return;
-  document.body.dataset.aceProductionWordsCleaned = "true";
+function aceMarkComingSoonButtons() {
+  var buttons = Array.from(document.querySelectorAll("button"));
+  buttons.forEach(function (button) {
+    var label = (button.textContent || "").trim().toLowerCase();
+    if (!label) return;
 
-  var replacements = [
-    [/\bmockup\b/gi, "platform"],
-    [/\bprototype\b/gi, "platform"],
-    [/\bdemo\b/gi, "platform"],
-    [/\bsample\b/gi, "example"],
-    [/\btest app\b/gi, "ACE platform"],
-    [/Mock Local Data/g, "Athlete Activity"],
-    [/Mock alerts/g, "Platform alerts"],
-    [/Mock trends/g, "Performance trends"],
-    [/Mock comment thread/g, "Coach communication"],
-    [/Mock multi-step setup/g, "Athlete setup"],
-    [/Mock local video library/g, "Athlete video library"],
-    [/Video Placeholder/g, "Video Review"],
-    [/Upload Not Active Yet/g, "Upload Coming Soon"],
-    [/Uploads Coming Later/g, "Video Review"],
-    [/Forgot password\? Coming with real auth\./g, "Forgot password?"]
-  ];
+    var isComingSoon =
+      label.indexOf("upload") !== -1 ||
+      label.indexOf("add coach breakdown") !== -1 ||
+      label.indexOf("forgot password") !== -1;
 
-  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-  var node;
-  while ((node = walker.nextNode())) {
-    var original = node.nodeValue;
-    var cleaned = original;
-    replacements.forEach(function (pair) {
-      cleaned = cleaned.replace(pair[0], pair[1]);
+    if (!isComingSoon) return;
+
+    if (button.disabled) button.disabled = false;
+    if (button.dataset.aceComingSoonReady === "true") return;
+    button.dataset.aceComingSoonReady = "true";
+    button.title = "Coming soon";
+    button.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      var notice = document.getElementById("ace-coming-soon-notice");
+      if (!notice) {
+        notice = document.createElement("div");
+        notice.id = "ace-coming-soon-notice";
+        notice.style.position = "fixed";
+        notice.style.left = "50%";
+        notice.style.bottom = "24px";
+        notice.style.transform = "translateX(-50%)";
+        notice.style.zIndex = "9999";
+        notice.style.background = "#09090b";
+        notice.style.color = "white";
+        notice.style.border = "1px solid #3f3f46";
+        notice.style.borderRadius = "14px";
+        notice.style.padding = "12px 16px";
+        notice.style.fontFamily = "system-ui, sans-serif";
+        notice.style.boxShadow = "0 18px 45px rgba(0,0,0,.35)";
+        document.body.appendChild(notice);
+      }
+      notice.textContent = "Coming soon";
+      window.clearTimeout(window.aceComingSoonNoticeTimer);
+      window.aceComingSoonNoticeTimer = window.setTimeout(function () {
+        if (notice && notice.parentNode) notice.parentNode.removeChild(notice);
+      }, 1800);
     });
-    if (cleaned !== original) node.nodeValue = cleaned;
-  }
+  });
 }
 
-function aceRunSafeStartupPolish() {
+function aceStartupButtonSafety() {
   aceFixLogoPaths();
-  window.setTimeout(function () {
-    aceCleanProductionWordsOnce();
-  }, 900);
+  aceMarkComingSoonButtons();
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", aceRunSafeStartupPolish);
+  document.addEventListener("DOMContentLoaded", aceStartupButtonSafety);
 } else {
-  aceRunSafeStartupPolish();
+  aceStartupButtonSafety();
 }
 
-var aceLogoObserverQueued = false;
-var aceLogoObserver = new MutationObserver(function () {
-  if (aceLogoObserverQueued) return;
-  aceLogoObserverQueued = true;
+var aceButtonObserverQueued = false;
+var aceButtonObserver = new MutationObserver(function () {
+  if (aceButtonObserverQueued) return;
+  aceButtonObserverQueued = true;
   window.setTimeout(function () {
-    aceLogoObserverQueued = false;
+    aceButtonObserverQueued = false;
     aceFixLogoPaths();
-  }, 500);
+    aceMarkComingSoonButtons();
+  }, 600);
 });
 
-aceLogoObserver.observe(document.documentElement, {
+aceButtonObserver.observe(document.documentElement, {
   childList: true,
   subtree: true
 });
