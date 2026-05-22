@@ -2,10 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#020617" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="ACE Baseball" />
     <meta name="application-name" content="ACE Baseball" />
+    <meta name="format-detection" content="telephone=no" />
     <title>ACE Baseball | Coach Console</title>
     <link rel="icon" href="/ace-logo.png" />
     <link rel="apple-touch-icon" href="/ace-logo.png" />
@@ -26,16 +30,24 @@
 
       * {
         box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
       }
 
       html {
         background: var(--ace-navy);
         scroll-behavior: smooth;
+        overflow-x: hidden;
+        width: 100%;
       }
 
       body {
         min-height: 100vh;
+        width: 100%;
+        overflow-x: hidden;
         margin: 0;
+        overscroll-behavior-y: contain;
+        -webkit-overflow-scrolling: touch;
+        touch-action: manipulation;
         background:
           radial-gradient(circle at top left, rgba(185, 28, 28, 0.18), transparent 32rem),
           radial-gradient(circle at top right, rgba(148, 163, 184, 0.11), transparent 30rem),
@@ -48,12 +60,16 @@
 
       #root {
         min-height: 100vh;
+        width: 100%;
+        overflow-x: hidden;
       }
 
       main,
       section,
       header,
-      nav {
+      nav,
+      div,
+      article {
         min-width: 0;
       }
 
@@ -62,6 +78,13 @@
       h3,
       h4 {
         letter-spacing: -0.035em;
+        overflow-wrap: break-word;
+      }
+
+      p,
+      span,
+      strong {
+        overflow-wrap: break-word;
       }
 
       p {
@@ -79,6 +102,7 @@
       select,
       textarea {
         min-height: 44px;
+        max-width: 100%;
         transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
       }
 
@@ -95,13 +119,18 @@
         transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease, opacity 160ms ease, box-shadow 160ms ease;
       }
 
+      button {
+        min-height: 44px;
+        touch-action: manipulation;
+      }
+
       button:hover:not(:disabled) {
         transform: translateY(-1px);
         box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
       }
 
       button:active:not(:disabled) {
-        transform: translateY(0);
+        transform: scale(0.99);
       }
 
       button:disabled {
@@ -110,6 +139,7 @@
 
       img {
         max-width: 100%;
+        height: auto;
       }
 
       .ace-brand-card {
@@ -131,8 +161,10 @@
 
       .ace-splash {
         min-height: 100vh;
+        min-height: 100dvh;
         display: grid;
         place-items: center;
+        padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
         background:
           radial-gradient(circle at center, rgba(185, 28, 28, 0.14), transparent 26rem),
           linear-gradient(135deg, #020617, #050505);
@@ -175,6 +207,7 @@
         .ace-brand-card {
           margin: 1rem;
           padding: 1.25rem !important;
+          max-width: calc(100vw - 32px) !important;
         }
 
         .ace-logo-mark {
@@ -187,6 +220,7 @@
         select,
         textarea {
           width: 100%;
+          font-size: 16px;
         }
 
         nav button,
@@ -205,6 +239,11 @@
         [class*="gap-6"] {
           gap: 1rem !important;
         }
+
+        [class*="grid-cols-"],
+        [style*="grid-template-columns"] {
+          min-width: 0;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -222,7 +261,7 @@
   <body>
     <div id="root">
       <div class="ace-splash">
-        <div class="ace-brand-card" style="border-radius: 28px; padding: 28px; text-align: center; max-width: 360px;">
+        <div class="ace-brand-card" style="border-radius: 28px; padding: 28px; text-align: center; max-width: 360px; width:100%;">
           <img src="/ace-logo.png" alt="ACE Baseball" class="ace-logo-mark" style="margin: 0 auto 16px;" />
           <div style="font-size: 12px; letter-spacing: 0.28em; color: #fca5a5; font-weight: 900; text-transform: uppercase;">ACE Baseball</div>
           <div style="font-size: 24px; font-weight: 900; margin-top: 6px;">Loading Platform</div>
