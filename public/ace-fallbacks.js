@@ -29,50 +29,6 @@ function getAthleteMetrics(athlete) {
   };
 }
 
-function getMockAthleteTimeline(athlete) {
-  const veloLog = (athlete && athlete.veloLog) || [];
-  const dailyCompletions = (athlete && athlete.dailyCompletions) || [];
-  const coachNotes = (athlete && athlete.coachNotes) || "";
-  const currentVelo = athlete && athlete.currentVelo;
-  const athleteName = (athlete && athlete.name) || "Athlete";
-
-  return [
-    {
-      id: "timeline-1",
-      date: "Today",
-      readiness: 87,
-      soreness: 2,
-      throwingStatus: "Medium Intent",
-      velocity: (veloLog[0] && veloLog[0].velo) || currentVelo || "--",
-      armCareComplete: Boolean(dailyCompletions[0] && dailyCompletions[0].completed),
-      coachNote: coachNotes || athleteName + " should stay smooth early, then build intent after the arm feels hot.",
-      hasVideo: false
-    },
-    {
-      id: "timeline-2",
-      date: "Yesterday",
-      readiness: 74,
-      soreness: 4,
-      throwingStatus: "Recovery Throw",
-      velocity: (veloLog[1] && veloLog[1].velo) || "--",
-      armCareComplete: true,
-      coachNote: "Recovery quality looked solid. Keep the front side calm and avoid rushing tempo.",
-      hasVideo: true
-    },
-    {
-      id: "timeline-3",
-      date: "2 Days Ago",
-      readiness: 91,
-      soreness: 1,
-      throwingStatus: "Bullpen",
-      velocity: (veloLog[2] && veloLog[2].velo) || currentVelo || "--",
-      armCareComplete: true,
-      coachNote: "Best day of the week. Direction and timing were much cleaner into foot strike.",
-      hasVideo: false
-    }
-  ];
-}
-
 function aceShowNotice(message) {
   var notice = document.getElementById("ace-coming-soon-notice");
   if (!notice) {
@@ -105,11 +61,6 @@ function aceFixLogoPaths() {
     img.src = "/ace-logo.svg";
     img.style.objectFit = "contain";
   });
-
-  var icons = document.querySelectorAll('link[href="/ace-logo.png"], link[href="ace-logo.png"]');
-  icons.forEach(function (link) {
-    link.href = "/ace-logo.svg";
-  });
 }
 
 function aceMarkComingSoonButtons() {
@@ -124,15 +75,112 @@ function aceMarkComingSoonButtons() {
       label.indexOf("forgot password") !== -1;
 
     if (!isComingSoon) return;
-    if (button.disabled) button.disabled = false;
     if (button.dataset.aceComingSoonReady === "true") return;
 
     button.dataset.aceComingSoonReady = "true";
-    button.title = "Coming soon";
     button.addEventListener("click", function (event) {
       event.preventDefault();
       event.stopPropagation();
       aceShowNotice("Coming soon");
+    });
+  });
+}
+
+function aceInjectAthleteTodayFocus() {
+  if (document.getElementById("ace-athlete-today-focus")) return;
+
+  var todayHeading = Array.from(document.querySelectorAll("h2, h1, h3")).find(function (heading) {
+    var text = (heading.textContent || "").trim().toLowerCase();
+    return text === "today" || text.indexOf("today dashboard") !== -1;
+  });
+
+  if (!todayHeading) return;
+
+  var todayCard = todayHeading.closest(".rounded-3xl");
+  if (!todayCard || !todayCard.parentNode) return;
+
+  var statuses = [
+    "High Intent Day",
+    "Build-Up Day",
+    "Bullpen Day",
+    "Recovery Focus",
+    "Completed"
+  ];
+
+  var section = document.createElement("section");
+  section.id = "ace-athlete-today-focus";
+  section.style.marginBottom = "16px";
+  section.style.border = "1px solid rgba(148,163,184,.16)";
+  section.style.borderRadius = "24px";
+  section.style.background = "linear-gradient(135deg, rgba(127,29,29,.18), rgba(2,6,23,.95))";
+  section.style.padding = "18px";
+
+  section.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:14px;">' +
+      '<div>' +
+        '<div style="font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:#fca5a5;font-weight:900;margin-bottom:4px;">ACE Daily Flow</div>' +
+        '<h3 style="margin:0;color:white;font-size:22px;font-weight:900;letter-spacing:-.03em;">Today\'s Focus</h3>' +
+        '<p style="margin:6px 0 0;color:#a1a1aa;font-size:13px;line-height:1.5;max-width:640px;">Prioritize throwing, arm care, assigned drills, recovery, and coach communication from one fast athlete workflow.</p>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">' + statuses.map(function(status){
+        return '<span style="font-size:10px;text-transform:uppercase;font-weight:900;color:#fecaca;background:rgba(127,29,29,.28);border:1px solid rgba(248,113,113,.38);border-radius:999px;padding:8px 10px;white-space:nowrap;">'+status+'</span>';
+      }).join('') + '</div>' +
+    '</div>' +
+
+    '<div class="ace-athlete-priority-grid" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px;">' +
+      '<div class="ace-athlete-priority-card"><span>Throwing Plan</span><strong>Today\'s workload</strong></div>' +
+      '<div class="ace-athlete-priority-card"><span>Arm Care</span><strong>Recovery priority</strong></div>' +
+      '<div class="ace-athlete-priority-card"><span>Assigned Drills</span><strong>Movement focus</strong></div>' +
+      '<div class="ace-athlete-priority-card"><span>Readiness</span><strong>Daily status</strong></div>' +
+      '<div class="ace-athlete-priority-card"><span>Coach Notes</span><strong>Execution cue</strong></div>' +
+    '</div>' +
+
+    '<div class="ace-athlete-quick-actions" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px;">' +
+      '<button type="button">Complete Throwing</button>' +
+      '<button type="button">Complete Arm Care</button>' +
+      '<button type="button">View Assigned Drills</button>' +
+      '<button type="button">Add Daily Notes</button>' +
+    '</div>' +
+
+    '<div style="border:1px solid rgba(148,163,184,.16);background:#000;border-radius:18px;padding:14px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">' +
+        '<div>' +
+          '<div style="font-size:11px;text-transform:uppercase;color:#71717a;font-weight:900;">Daily Completion</div>' +
+          '<div style="font-size:18px;font-weight:900;color:white;letter-spacing:-.03em;">Keep Your Streak Alive</div>' +
+        '</div>' +
+        '<div style="font-size:13px;color:#fca5a5;font-weight:900;">82% Complete</div>' +
+      '</div>' +
+      '<div style="height:12px;border-radius:999px;background:#18181b;overflow:hidden;">' +
+        '<div style="width:82%;height:100%;background:linear-gradient(90deg,#ef4444,#fca5a5);border-radius:999px;"></div>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;color:#71717a;font-size:12px;">' +
+        '<span>Throwing ✔</span>' +
+        '<span>Arm Care ✔</span>' +
+        '<span>Velocity Logged</span>' +
+        '<span>Daily Notes</span>' +
+      '</div>' +
+    '</div>';
+
+  todayCard.parentNode.insertBefore(section, todayCard);
+
+  var style = document.getElementById("ace-athlete-today-style");
+  if (!style) {
+    style = document.createElement("style");
+    style.id = "ace-athlete-today-style";
+    style.textContent =
+      '.ace-athlete-priority-card{border:1px solid rgba(148,163,184,.16);background:#000;border-radius:18px;padding:12px;min-width:0}' +
+      '.ace-athlete-priority-card span{display:block;font-size:10px;text-transform:uppercase;color:#71717a;font-weight:900;margin-bottom:4px}' +
+      '.ace-athlete-priority-card strong{display:block;color:white;font-size:13px;line-height:1.2}' +
+      '.ace-athlete-quick-actions button{border:1px solid rgba(148,163,184,.16);background:#18181b;color:white;border-radius:16px;padding:14px;font-weight:900;font-size:12px;min-height:48px}' +
+      '.ace-athlete-quick-actions button:hover{border-color:rgba(248,113,113,.45);background:rgba(127,29,29,.24)}' +
+      '@media(max-width:900px){.ace-athlete-priority-grid{grid-template-columns:1fr 1fr!important}.ace-athlete-quick-actions{grid-template-columns:1fr 1fr!important}}' +
+      '@media(max-width:640px){.ace-athlete-priority-grid,.ace-athlete-quick-actions{grid-template-columns:1fr!important}}';
+    document.head.appendChild(style);
+  }
+
+  section.querySelectorAll('button').forEach(function(button){
+    button.addEventListener('click', function(){
+      aceShowNotice(button.textContent + ' ready');
     });
   });
 }
@@ -157,107 +205,15 @@ function aceInjectWeeklyCoachOverview() {
   section.style.background = "linear-gradient(135deg, rgba(9,9,11,.94), rgba(2,6,23,.94))";
   section.style.padding = "18px";
 
-  section.innerHTML =
-    '<div style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;">' +
-      '<div>' +
-        '<div style="font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:#fca5a5;font-weight:900;margin-bottom:4px;">ACE Programming View</div>' +
-        '<h3 style="margin:0;color:white;font-size:20px;font-weight:900;letter-spacing:-.03em;">Weekly Development Overview</h3>' +
-        '<p style="margin:6px 0 0;color:#a1a1aa;font-size:13px;line-height:1.5;max-width:680px;">Plan throwing, drills, arm care, recovery emphasis, and coach focuses from one weekly operating view. Existing builder controls stay unchanged below.</p>' +
-      '</div>' +
-      '<span style="height:max-content;font-size:10px;text-transform:uppercase;font-weight:900;color:#fecaca;background:rgba(127,29,29,.30);border:1px solid rgba(248,113,113,.40);border-radius:999px;padding:8px 10px;">Coach Workflow</span>' +
-    '</div>' +
-    '<div class="ace-weekly-overview-grid" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px;">' +
-      '<div class="ace-weekly-stat"><span>Throwing Schedule</span><strong>Build by Day</strong></div>' +
-      '<div class="ace-weekly-stat"><span>Workload</span><strong>Monitor Volume</strong></div>' +
-      '<div class="ace-weekly-stat"><span>Recovery</span><strong>Arm Care Focus</strong></div>' +
-      '<div class="ace-weekly-stat"><span>Assigned Work</span><strong>Drills + Care</strong></div>' +
-      '<div class="ace-weekly-stat"><span>Completed Work</span><strong>Track Daily</strong></div>' +
-    '</div>' +
-    '<div class="ace-weekly-actions" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;">' +
-      '<button type="button" data-target="throwing">Assign Throwing Days</button>' +
-      '<button type="button" data-target="drills">Assign Drills</button>' +
-      '<button type="button" data-target="armcare">Assign Arm Care</button>' +
-      '<button type="button" data-target="notes">Add Notes / Focus</button>' +
-    '</div>';
-
+  section.innerHTML = '<h3 style="margin:0;color:white;font-size:20px;font-weight:900;">Weekly Development Overview</h3>';
   weeklyCard.parentNode.insertBefore(section, weeklyCard.nextSibling);
-
-  var style = document.getElementById("ace-weekly-overview-style");
-  if (!style) {
-    style = document.createElement("style");
-    style.id = "ace-weekly-overview-style";
-    style.textContent =
-      '.ace-weekly-stat{border:1px solid rgba(148,163,184,.16);background:#000;border-radius:16px;padding:12px;min-width:0}' +
-      '.ace-weekly-stat span{display:block;color:#71717a;font-size:10px;text-transform:uppercase;font-weight:900;margin-bottom:4px}' +
-      '.ace-weekly-stat strong{display:block;color:white;font-size:13px;line-height:1.2}' +
-      '.ace-weekly-actions button{border:1px solid rgba(148,163,184,.16);background:#18181b;color:white;border-radius:14px;padding:12px;font-weight:900;font-size:12px;min-height:44px}' +
-      '.ace-weekly-actions button:hover{border-color:rgba(248,113,113,.55);background:rgba(127,29,29,.25)}' +
-      '@media(max-width:900px){.ace-weekly-overview-grid{grid-template-columns:1fr 1fr!important}.ace-weekly-actions{grid-template-columns:1fr!important}}';
-    document.head.appendChild(style);
-  }
-
-  section.querySelectorAll("button").forEach(function (button) {
-    button.addEventListener("click", function () {
-      var target = button.getAttribute("data-target");
-      var targetText = target === "throwing" ? "Throwing Plan" : target === "drills" ? "Drills" : target === "armcare" ? "Arm Care" : "Focus";
-      var labels = Array.from(document.querySelectorAll("div, label, h3, h4, textarea, input"));
-      var found = labels.find(function (el) {
-        var text = (el.placeholder || el.textContent || "").toLowerCase();
-        return text.indexOf(targetText.toLowerCase()) !== -1;
-      });
-      if (found && found.scrollIntoView) {
-        found.scrollIntoView({ behavior: "smooth", block: "center" });
-        aceShowNotice("Jumped to " + targetText);
-      } else {
-        aceShowNotice(targetText + " is available in the weekly builder below");
-      }
-    });
-  });
-}
-
-function aceInjectCoachStatusGuide() {
-  if (document.getElementById("ace-coach-status-guide")) return;
-
-  var athleteHeading = Array.from(document.querySelectorAll("h2")).find(function (heading) {
-    var text = (heading.textContent || "").trim();
-    return text && text !== "Athletes" && text !== "Weekly Builder" && text !== "Assessment";
-  });
-
-  if (!athleteHeading) return;
-  var athleteCard = athleteHeading.closest(".rounded-3xl");
-  if (!athleteCard || !athleteCard.parentNode) return;
-
-  var guide = document.createElement("div");
-  guide.id = "ace-coach-status-guide";
-  guide.style.border = "1px solid rgba(148,163,184,.16)";
-  guide.style.borderRadius = "22px";
-  guide.style.background = "rgba(9,9,11,.90)";
-  guide.style.padding = "14px";
-  guide.style.marginTop = "12px";
-  guide.innerHTML =
-    '<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;" class="ace-coach-status-grid">' +
-      '<div class="ace-weekly-stat"><span>Status</span><strong>Check active week</strong></div>' +
-      '<div class="ace-weekly-stat"><span>Soreness</span><strong>Watch recovery needs</strong></div>' +
-      '<div class="ace-weekly-stat"><span>Incomplete</span><strong>Review daily logs</strong></div>' +
-      '<div class="ace-weekly-stat"><span>Focus</span><strong>Notes + assessments</strong></div>' +
-    '</div>';
-
-  athleteCard.appendChild(guide);
-
-  var style = document.getElementById("ace-coach-status-style");
-  if (!style) {
-    style = document.createElement("style");
-    style.id = "ace-coach-status-style";
-    style.textContent = '@media(max-width:900px){.ace-coach-status-grid{grid-template-columns:1fr 1fr!important}}';
-    document.head.appendChild(style);
-  }
 }
 
 function aceStartupEnhancements() {
   aceFixLogoPaths();
   aceMarkComingSoonButtons();
+  aceInjectAthleteTodayFocus();
   aceInjectWeeklyCoachOverview();
-  aceInjectCoachStatusGuide();
 }
 
 if (document.readyState === "loading") {
